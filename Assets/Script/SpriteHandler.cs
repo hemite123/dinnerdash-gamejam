@@ -119,12 +119,13 @@ public class SpriteHandler : MonoBehaviour
         if(isCookingUtensil && cookProseess && start_waiting_time)
         {
             
-            stove_ingredient.SetActive(false);
+            stove_ingredient.transform.parent.parent.gameObject.SetActive(false);
             if (!waiting_time.active)
             {
                 waiting_time.SetActive(true);
             }
             current_waiting_time += Time.deltaTime;
+            waiting_time.GetComponent<Image>().fillAmount -= (1 / waitingtimeinsecond) * Time.deltaTime;
             if (current_waiting_time >= waitingtimeinsecond && !onproc)
             {
                 onproc = true;
@@ -139,7 +140,8 @@ public class SpriteHandler : MonoBehaviour
                 }
                 if(storeIngredient.Count > 0 && !stove_ingredient.active)
                 {
-                    stove_ingredient.SetActive(true);
+                    stove_ingredient.transform.parent.parent.gameObject.SetActive(true);
+                    stove_ingredient.transform.parent.parent.GetComponent<ScrollRect>().horizontalNormalizedPosition = 0f;
                 }
                 cookStep++;
                 ingredientOn = null;
@@ -199,6 +201,7 @@ public class SpriteHandler : MonoBehaviour
                 cloneimage.transform.localScale = new Vector3(1, 1, 1   );
                 cloneimage.GetComponent<Image>().sprite = ingredient.ingredient_img;
                 onproc = false;
+                waiting_time.GetComponent<Image>().fillAmount = 1;
                 //check food to make
             }
 
@@ -296,7 +299,7 @@ public class SpriteHandler : MonoBehaviour
             }
             yield return null;
         }
-        stove_ingredient.SetActive(false);
+        stove_ingredient.transform.parent.parent.gameObject.SetActive(false);
     }
 
     IEnumerator fillAction()
