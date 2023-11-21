@@ -87,6 +87,7 @@ public class DragAndDrop : MonoBehaviour
                         go_verification.transform.localPosition = hit.transform.localPosition + new Vector3(0, 1.5f, 0);
                         gamemanager.draggingbuying = hit.transform.gameObject;
                         gamemanager.draggingbuying.GetComponent<SpriteRenderer>().sortingOrder = 1;
+                        gamemanager.rotate_image.SetActive(true);
                         return;
                     }
                     if ((gamemanager.buyingobject || gamemanager.changePlace) && hit.transform.gameObject != gamemanager.draggingbuying)

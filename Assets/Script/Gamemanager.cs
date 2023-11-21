@@ -94,6 +94,7 @@ public class Gamemanager : MonoBehaviour
     public GameObject floor;
     public GameObject image_recipes_fridge;
     public GameObject content_recipeS_fridge;
+    public GameObject rotate_image;
     private void Awake()
     {
         if (instance == null)
@@ -130,12 +131,12 @@ public class Gamemanager : MonoBehaviour
                     if(go.GetComponent<Image>())
                     {
                         go.GetComponent<Image>().sprite = uten.utensil_img;
-                    }else if(go.GetComponent<Text>() && go.name.Equals("price"))
+                    }else if(go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("price"))
                     {
-                        go.GetComponent<Text>().text = uten.utensil_price.ToString();
-                    }else if(go.GetComponent<Text>() && go.name.Equals("UtensilName"))
+                        go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.utensil_price.ToString();
+                    }else if(go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("UtensilName"))
                     {
-                        go.GetComponent<Text>().text = uten.utensil_name;
+                        go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.utensil_name;
                     }
                 }
                 clone.transform.localScale = new Vector3(1, 1, 1);

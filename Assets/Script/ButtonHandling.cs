@@ -84,6 +84,7 @@ public class ButtonHandling : MonoBehaviour
             go_verification.transform.GetChild(0).GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { DeclineBuy(gameObject); });
             gamemanager.spawnVerification = go_verification;
             gamemanager.charge = utensil.utensil_price;
+            gamemanager.rotate_image.SetActive(true);
         }
     }
 
@@ -172,6 +173,7 @@ public class ButtonHandling : MonoBehaviour
         }
         gamemanager.currency -= gamemanager.charge;
         gamemanager.charge = 0;
+        gamemanager.rotate_image.SetActive(false);
     }
 
     public void DeclineBuy(GameObject object_to_buy)
@@ -179,6 +181,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.buyingobject = false;
         gamemanager.draggingbuying = null;
         gamemanager.addUtensil = false;
+        gamemanager.rotate_image.SetActive(false);
         gamemanager.charge = 0;
         DestroyImmediate(GameObject.FindGameObjectWithTag("Notif"));
         DestroyImmediate(object_to_buy);
@@ -196,6 +199,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.updatingMap = true;
         gamemanager.draggingbuying = null;
         gamemanager.addUtensil = false;
+        gamemanager.rotate_image.SetActive(false);
         object_to_buy.GetComponent<SpriteRenderer>().sortingOrder = 0;
         DestroyImmediate(GameObject.FindGameObjectWithTag("Notif"));
         object_to_buy.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255);
@@ -215,6 +219,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.addUtensil = false;
         DestroyImmediate(GameObject.FindGameObjectWithTag("Notif"));
         DestroyImmediate(object_to_buy);
+        gamemanager.rotate_image.SetActive(false);
     }
 
     public void ExpandUi()
