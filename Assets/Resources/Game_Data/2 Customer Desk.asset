@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3d533cb21cf2c8141922b58171f8de5d, type: 3}
+  m_Name: 2 Customer Desk
+  m_EditorClassIdentifier: 
+  utensil_name: 2 Customer Desk
+  utensil_img: {fileID: 0}
+  utensil_price: 500
+  utensil_mutliple: 1
+  utensil_type: 3
+  utensil_max_use: 2
+  utensil_placing: {fileID: 0}
+  isGround: 1
+  cookStep: []
+  utensil_gameobject: {fileID: 6493150078700486735, guid: 95f961cbe5d27f646ad2b37e267ba352, type: 3}

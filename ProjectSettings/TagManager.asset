@@ -1,0 +1,65 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - InformationText
+  - Sprite_Image
+  - Utensil
+  - Customer
+  - Chair
+  - Food
+  - Food_Object
+  - Food_Place
+  - Notif
+  - DeclineBuy
+  - AcceptBuy
+  - CustomerWaiting
+  - ChairPopup
+  - Canvas
+  - Initial
+  - ListRecipe
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - 
+  - Water
+  - UI
+  - Sprite_Image
+  - InformationText
+  - Child
+  - Customer
+  - Utensil
+  - Ingredient
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Object
+    uniqueID: 85554395
+    locked: 0
+  - name: Default
+    uniqueID: 0
+    locked: 0
+  - name: LayerBuyAndChange
+    uniqueID: 134202367
+    locked: 0
