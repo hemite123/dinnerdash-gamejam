@@ -317,13 +317,19 @@ public class DragAndDrop : MonoBehaviour
                                                     else
                                                     {
                                                         List<Ingredient> temporaryCheck = new List<Ingredient>();
+                                                        int index = 0;
                                                         //list of store find convert all
                                                         List<ScriptableObject> listof_store = spritehand.storeIngredient;
                                                         foreach (Ingredient ingredient in listfood.ingredient_food)
                                                         {
-                                                            if (listof_store.Contains(ingredient) || listof_store.Contains(ingredient.finish_ingredient_object))
+                                                            if(index == listof_store.Count)
+                                                            {
+                                                                break;
+                                                            }
+                                                            if (listof_store[index] == ingredient || listof_store[index] == ingredient.finish_ingredient_object)
                                                             {
                                                                 temporaryCheck.Add(ingredient);
+                                                                index++;
                                                             }
                                                             else
                                                             {

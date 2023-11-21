@@ -92,6 +92,8 @@ public class Gamemanager : MonoBehaviour
     public int customereat;
     public Slider slider;
     public GameObject floor;
+    public GameObject image_recipes_fridge;
+    public GameObject content_recipeS_fridge;
     private void Awake()
     {
         if (instance == null)
@@ -168,7 +170,7 @@ public class Gamemanager : MonoBehaviour
                 GameObject clone = Instantiate(itemrefrigenerator, refrigeneratorSpawn.transform, true);
                 clone.GetComponent<Button>().onClick.AddListener(delegate { button_hand.SpawningFridge((Ingredient)obj); });
                 clone.GetComponent<Image>().sprite = uten.ingredient_img;
-                clone.GetComponentInChildren<Text>().text = uten.ingredient_name;
+                clone.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = uten.ingredient_name;
                 clone.transform.localScale = new Vector3(1, 1, 1);
             }
         }
@@ -404,6 +406,7 @@ public class Gamemanager : MonoBehaviour
                     closingtime = false;
                     customerodds = 0;
                     normalodds += 0.1f;
+                    StartCoroutine(removeallRecipeFridge());
                 }
                 
                 //displaying UI detailed gold and stars
@@ -474,5 +477,26 @@ public class Gamemanager : MonoBehaviour
         go.transform.localScale = new Vector3(1, 1, 0);
         totalcustomerinfield += 1;
 
+    }
+
+    IEnumerator removeallRecipeFridge()
+    {
+        while (content_recipeS_fridge.transform.childCount > 0)
+        {
+            foreach (Transform trf in content_recipeS_fridge.transform)
+            {
+                DestroyImmediate(trf.gameObject);
+            }
+            yield return null;
+        }
+        while (food_list_ui.transform.childCount > 0)
+        {
+            foreach (Transform trf in food_list_ui.transform)
+            {
+                DestroyImmediate(trf.gameObject);
+            }
+            yield return null;
+        }
+        addImage = false;
     }
 }

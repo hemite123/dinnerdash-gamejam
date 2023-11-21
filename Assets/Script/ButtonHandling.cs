@@ -280,6 +280,21 @@ public class ButtonHandling : MonoBehaviour
                 gamemanager.customerodds += 0.01f * multiple;
             }
             GameObject.Find("daynight").GetComponent<TMPro.TextMeshProUGUI>().text = "Day";
+            foreach(FoodMenu food_select in gamemanager.foodSelect)
+            {
+                GameObject instance = Instantiate(gamemanager.image_recipes_fridge,gamemanager.content_recipeS_fridge.transform,false);
+                instance.transform.Find("imgFood").GetComponent<Image>().sprite = food_select.food_img;
+                instance.transform.localScale = new Vector3(1, 1, 1);
+                Transform parenttospawn = instance.transform.Find("ingred").Find("viewport").Find("content_ingredient").transform;
+                foreach (Ingredient ingredient in food_select.ingredient_food)
+                {
+                    GameObject clondata = Instantiate(gamemanager.fill_ui_recipe,parenttospawn,false);
+                    clondata.transform.localScale = new Vector3(1, 1, 1);
+                    clondata.transform.Find("ImgData").GetComponent<Image>().sprite = ingredient.ingredient_img;
+                    clondata.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = ingredient.ingredient_name;
+
+                }
+            }
         }
         else
         {
@@ -300,17 +315,19 @@ public class ButtonHandling : MonoBehaviour
                 break;
             }
         }
-        GameObject insntate = Instantiate(gamemanager.sprite_food_and_ingredient,selectedSpawn,false);
-        insntate.transform.localScale = new Vector3(2, 2, 2);
-        insntate.transform.position = selectedSpawn.transform.position;
-        handle.refriitem.Add(insntate);
-        FoodHandling data = insntate.GetComponent<FoodHandling>();
-        data.refrigenerator = gamemanager.refrigenerator;
-        data.isIngredient = true;
-        data.food_data = ingredspawn;
-        gamemanager.uiRefrigenerator.SetActive(false);
-        gamemanager.chunk_food.Add(insntate);
-        gamemanager.refrigenerator = null;
+        if(selectedSpawn != null)
+        {
+            GameObject insntate = Instantiate(gamemanager.sprite_food_and_ingredient, selectedSpawn, false);
+            insntate.transform.localScale = new Vector3(2, 2, 2);
+            insntate.transform.position = selectedSpawn.transform.position;
+            handle.refriitem.Add(insntate);
+            FoodHandling data = insntate.GetComponent<FoodHandling>();
+            data.refrigenerator = gamemanager.refrigenerator;
+            data.isIngredient = true;
+            data.food_data = ingredspawn;
+            gamemanager.chunk_food.Add(insntate);
+        }
+        
 
     }
 
@@ -374,6 +391,7 @@ public class ButtonHandling : MonoBehaviour
                 clondata.transform.Find("ImgData").GetComponent<Image>().sprite = ingred.ingredient_img;
                 clondata.GetComponentInChildren<TMPro.TextMeshProUGUI>().text = ingred.ingredient_name;
             }
+            gamemanager.content_recipe.transform.parent.parent.GetComponent<ScrollRect>().horizontalNormalizedPosition = 0f;
         }
     }
 
@@ -403,5 +421,11 @@ public class ButtonHandling : MonoBehaviour
             StartCoroutine(gamemanager.CloseSumamry());
         }
         
+    }
+
+    public void CloseRefrigenerator()
+    {
+        gamemanager.uiRefrigenerator.SetActive(false);
+        gamemanager.refrigenerator = null;
     }
 }
