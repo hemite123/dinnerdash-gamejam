@@ -84,15 +84,27 @@ public class DragAndDrop : MonoBehaviour
                         go_verification.transform.GetChild(0).GetChild(0).GetComponent<Button>().onClick.AddListener(delegate { ButtonHandling.instance.AcceptChange(hit.transform.gameObject); });
                         go_verification.transform.GetChild(0).GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { ButtonHandling.instance.DeleteChange(hit.transform.gameObject); });
                         gamemanager.spawnVerification = go_verification;
-                        go_verification.transform.localPosition = hit.transform.localPosition + new Vector3(0, 1.5f, 0);
+                        go_verification.transform.localPosition = hit.transform.localPosition + new Vector3(0, 0, 0);
                         gamemanager.draggingbuying = hit.transform.gameObject;
                         gamemanager.draggingbuying.GetComponent<SpriteRenderer>().sortingOrder = 1;
+                        gamemanager.draggingbuying.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                        foreach (Transform childObj in gamemanager.draggingbuying.transform)
+                        {
+                            if (childObj.tag.Equals("Chair"))
+                            {
+                                childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                            }
+                        }
                         gamemanager.rotate_image.SetActive(true);
                         return;
                     }
                     if ((gamemanager.buyingobject || gamemanager.changePlace) && hit.transform.gameObject != gamemanager.draggingbuying)
                     {
                         return;
+                    }
+                    if (gamemanager.spawnVerification != null)
+                    {
+                        gamemanager.spawnVerification.SetActive(false);
                     }
                     draggedObject = hit.transform;
                     lastPosition = (Vector2)hit.transform.position;
@@ -102,7 +114,7 @@ public class DragAndDrop : MonoBehaviour
             {
                 if (gamemanager.spawnVerification != null)
                 {
-                    gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y + 0.15f, draggedObject.localPosition.z) + new Vector3(0, 2, 0);
+                    gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y, draggedObject.localPosition.z);
                 }
             }
             
@@ -110,15 +122,11 @@ public class DragAndDrop : MonoBehaviour
         {
             if (objectOutside)
             {
-                Debug.Log("X Outside");
-                draggedObject.transform.position = lastPosition;
-                if(gamemanager.spawnVerification != null)
-                {
-                    gamemanager.spawnVerification.transform.localPosition = lastPosition + new Vector2(0, 2f);
-                }
+                draggedObject.localPosition = lastPosition;
                 draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
                 lastPosition = Vector2.zero;
-            }else if(gamemanager.buyingobject || gamemanager.changePlace){
+            } 
+            if(gamemanager.buyingobject || gamemanager.changePlace){
                 draggedObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
                 foreach (Transform childObj in draggedObject.transform)
                 {
@@ -126,6 +134,11 @@ public class DragAndDrop : MonoBehaviour
                     {
                         childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
                     }
+                }
+                if (gamemanager.spawnVerification != null)
+                {
+                    gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y, draggedObject.localPosition.z);
+                    gamemanager.spawnVerification.SetActive(true);
                 }
                 draggedObject = null;
                 return;

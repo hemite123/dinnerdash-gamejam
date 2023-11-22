@@ -79,7 +79,7 @@ public class ButtonHandling : MonoBehaviour
                     childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
                 }
             }
-            go_verification.transform.localPosition = gameObject.transform.localPosition + new Vector3(0, 1.5f, 0);
+            go_verification.transform.localPosition = gameObject.transform.localPosition + new Vector3(0, 0, 0);
             go_verification.transform.GetChild(0).GetChild(0).GetComponent<Button>().onClick.AddListener(delegate { AcceptBuy(gameObject,utensil); });
             go_verification.transform.GetChild(0).GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { DeclineBuy(gameObject); });
             gamemanager.spawnVerification = go_verification;
@@ -183,7 +183,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.addUtensil = false;
         gamemanager.rotate_image.SetActive(false);
         gamemanager.charge = 0;
-        DestroyImmediate(GameObject.FindGameObjectWithTag("Notif"));
+        DestroyImmediate(gamemanager.spawnVerification);
         DestroyImmediate(object_to_buy);
     }
 
