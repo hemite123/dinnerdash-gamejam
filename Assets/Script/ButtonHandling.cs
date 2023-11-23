@@ -14,6 +14,11 @@ public class ButtonHandling : MonoBehaviour
     int MaxDesk = 0;
     int openImage = 1;
     bool buttonselectRecipe;
+    public GameObject food_scroll_View;
+    public GameObject utensil_scroll_view;
+    public Sprite equipe_sprite;
+    public Sprite own_sprite;
+    public Sprite unonw_sprite;
 
     private void Awake()
     {
@@ -58,7 +63,7 @@ public class ButtonHandling : MonoBehaviour
             Utensil utensil = (Utensil)Data;
             if(gamemanager.currency < utensil.utensil_price)
             {
-                StartCoroutine(gamemanager.notifDisplay("Not Enough Money"));
+                StartCoroutine(gamemanager.notifDisplay("Not Enough Money","error"));
                 return;
             }
             float additionalscale = gamemanager.additionscale;
@@ -82,6 +87,7 @@ public class ButtonHandling : MonoBehaviour
             go_verification.transform.localPosition = gameObject.transform.localPosition + new Vector3(0, 0, 0);
             go_verification.transform.GetChild(0).GetChild(0).GetComponent<Button>().onClick.AddListener(delegate { AcceptBuy(gameObject,utensil); });
             go_verification.transform.GetChild(0).GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { DeclineBuy(gameObject); });
+            go_verification.GetComponent<SpriteRenderer>().sortingOrder = 3;
             gamemanager.spawnVerification = go_verification;
             gamemanager.charge = utensil.utensil_price;
             gamemanager.rotate_image.SetActive(true);
@@ -110,7 +116,7 @@ public class ButtonHandling : MonoBehaviour
         Collider2D collider = object_to_buy.GetComponent<Collider2D>();
         if (collider.IsTouchingLayers())
         {
-            StartCoroutine(gamemanager.notifDisplay("Cant Place Here"));
+            StartCoroutine(gamemanager.notifDisplay("Cant Place Here","error"));
             return;
         }
         gamemanager.buyingobject = false;
@@ -192,7 +198,7 @@ public class ButtonHandling : MonoBehaviour
         Collider2D collider = object_to_buy.GetComponent<Collider2D>();
         if (collider.IsTouchingLayers())
         {
-            StartCoroutine(gamemanager.notifDisplay("Cant Place Here"));
+            StartCoroutine(gamemanager.notifDisplay("Cant Place Here","error"));
             return;
         }
         gamemanager.changePlace = false;
@@ -254,7 +260,7 @@ public class ButtonHandling : MonoBehaviour
         }
         else
         {
-            StartCoroutine(gamemanager.notifDisplay("Not Enough Money"));
+            StartCoroutine(gamemanager.notifDisplay("Not Enough Money","error"));
             //Error buying
         }
     }
@@ -273,6 +279,11 @@ public class ButtonHandling : MonoBehaviour
     {
         if (!gamemanager.isTutorial)
         {
+            if(gamemanager.foodSelect.Count <= 0)
+            {
+                StartCoroutine(gamemanager.notifDisplay("Select The Food You Want To Serve","error"));
+                return;
+            }
             if (gamemanager.firstrunning)
             {
                 gamemanager.firstrunning = false;
@@ -303,7 +314,7 @@ public class ButtonHandling : MonoBehaviour
         }
         else
         {
-            StartCoroutine(gamemanager.notifDisplay("You'r In Tutorial"));
+            StartCoroutine(gamemanager.notifDisplay("You'r In Tutorial","error"));
         }
         
     }
@@ -432,5 +443,56 @@ public class ButtonHandling : MonoBehaviour
     {
         gamemanager.uiRefrigenerator.SetActive(false);
         gamemanager.refrigenerator = null;
+    }
+
+    public void ChangeMenu(string datastring)
+    {
+        if (datastring.Equals("Food"))
+        {
+            utensil_scroll_view.SetActive(false);
+            food_scroll_View.gameObject.SetActive(true);
+        }else if (datastring.Equals("Utensil"))
+        {
+            utensil_scroll_view.gameObject.SetActive(true);
+            food_scroll_View.SetActive(false);
+        }
+    }
+
+    public void SelectFood(FoodMenu foodMenu,GameObject button_food)
+    {
+        if(gamemanager.foodSelect.Count >= 3)
+        {
+            StartCoroutine(gamemanager.notifDisplay("Maxed Food Select","error"));
+            return;
+        }
+        //check if owned or not
+        if (!gamemanager.ownedFood.Contains(foodMenu))
+        {
+            if(gamemanager.currency >= foodMenu.foodPrice)
+            {
+                StartCoroutine(gamemanager.notifDisplay("Transaction Success","noterror"));
+                button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = own_sprite;
+                gamemanager.ownedFood.Add(foodMenu);
+                gamemanager.currency -= foodMenu.foodPrice;
+            }
+            else
+            {
+                StartCoroutine(gamemanager.notifDisplay("Not Enough Money", "error"));
+            }
+            //displaying the ui buy
+            return;
+        }
+        if (gamemanager.foodSelect.Contains(foodMenu)) 
+        {
+            StartCoroutine(gamemanager.notifDisplay("Unselect Food", "noterror"));
+            button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = own_sprite;
+            gamemanager.foodSelect.Remove(foodMenu);  
+        }
+        else
+        {
+            StartCoroutine(gamemanager.notifDisplay("Food Selected", "noterror"));
+            button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = equipe_sprite;
+            gamemanager.foodSelect.Add(foodMenu);
+        }
     }
 }

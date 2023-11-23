@@ -95,6 +95,7 @@ public class Gamemanager : MonoBehaviour
     public GameObject image_recipes_fridge;
     public GameObject content_recipeS_fridge;
     public GameObject rotate_image;
+    public List<FoodMenu> ownedFood = new List<FoodMenu>();
     private void Awake()
     {
         if (instance == null)
@@ -111,8 +112,9 @@ public class Gamemanager : MonoBehaviour
         cam = Camera.main;
         lastProjectionsize = cam.orthographicSize;
         quedialog = QueueDialog.instance;
-        LoadedGameUIAndAsset();
         button_hand = ButtonHandling.instance;
+        LoadedGameUIAndAsset();
+        
     }
 
     private void LoadedGameUIAndAsset()
@@ -147,16 +149,30 @@ public class Gamemanager : MonoBehaviour
             {
                 FoodMenu uten = obj as FoodMenu;
                 GameObject clone = Instantiate(food_button, content_food.transform, true);
-                clone.GetComponent<Button>().onClick.AddListener(delegate { button_hand.ActionButton(obj); });
+                clone.GetComponent<Button>().onClick.AddListener(delegate { button_hand.SelectFood(uten,clone); });
                 foreach (Transform go in clone.transform)
                 {
-                    if (go.GetComponent<Image>())
+                    if (go.GetComponent<Image>() && !go.name.Equals("ImgChecked"))
                     {
                         go.GetComponent<Image>().sprite = uten.food_img;
-                    }
-                    else if (go.GetComponent<Text>() && go.name.Equals("UtensilName"))
+                    }else if (go.name.Equals("ImgChecked"))
                     {
-                        go.GetComponent<Text>().text = uten.food_name;
+                        if (ownedFood.Contains((FoodMenu)obj))
+                        {
+                            go.GetComponent<Image>().sprite = button_hand.own_sprite;
+                        }
+                        else
+                        {
+                            go.GetComponent<Image>().sprite = button_hand.unonw_sprite;
+                        }
+                    }
+                    else if (go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("FoodName"))
+                    {
+                        go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.food_name;
+                    }
+                    else if (go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("PriceFood"))
+                    {
+                        go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.foodPrice.ToString();
                     }
                 }
                 clone.transform.localScale = new Vector3(1, 1, 1);
@@ -417,9 +433,17 @@ public class Gamemanager : MonoBehaviour
         
     }
 
-    public IEnumerator notifDisplay(string text)
+    public IEnumerator notifDisplay(string text,string texttype)
     {
         notificaiton_error.SetActive(true);
+        if (texttype.Equals("error"))
+        {
+            notificaiton_error.GetComponent<TMPro.TextMeshProUGUI>().color = Color.red;
+        }
+        else
+        {
+            notificaiton_error.GetComponent<TMPro.TextMeshProUGUI>().color = Color.green;
+        }
         notificaiton_error.GetComponent<TMPro.TextMeshProUGUI>().text = text;
         yield return new WaitForSeconds(1);
         notificaiton_error.SetActive(false);

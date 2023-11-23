@@ -42,7 +42,11 @@ public class DragAndDrop : MonoBehaviour
     {
         if (!gamemanager.quedialog.imagetutorial.transform.parent.parent.gameObject.active)
         {
-            DragAndDropFunction();
+            if (!EventSystem.current.IsPointerOverGameObject())
+            {
+                DragAndDropFunction();
+            }
+          
         }
         if (screenSize != (Vector2)cam.ScreenToWorldPoint(cam.pixelRect.size))
         {
@@ -66,10 +70,11 @@ public class DragAndDrop : MonoBehaviour
         {
             if (draggedObject == null)
             {
-                RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,0.1f,mask);
+                RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,0f,mask);
                 if (hit.collider != null)
                 {
-                    if (hit.transform.tag.Equals("Notif"))
+                    Debug.Log(hit.transform.name);
+                    if (hit.transform.tag.Equals("Notif") || hit.transform.gameObject.layer.Equals(5))
                     {
                         return;
                     }
@@ -86,7 +91,7 @@ public class DragAndDrop : MonoBehaviour
                         gamemanager.spawnVerification = go_verification;
                         go_verification.transform.localPosition = hit.transform.localPosition + new Vector3(0, 0, 0);
                         gamemanager.draggingbuying = hit.transform.gameObject;
-                        gamemanager.draggingbuying.GetComponent<SpriteRenderer>().sortingOrder = 1;
+                        gamemanager.draggingbuying.GetComponent<SpriteRenderer>().sortingOrder = 3;
                         gamemanager.draggingbuying.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
                         foreach (Transform childObj in gamemanager.draggingbuying.transform)
                         {
@@ -122,6 +127,7 @@ public class DragAndDrop : MonoBehaviour
         {
             if (objectOutside)
             {
+                objectOutside = false;
                 draggedObject.localPosition = lastPosition;
                 draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
                 lastPosition = Vector2.zero;

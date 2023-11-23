@@ -20,6 +20,7 @@ TagManager:
   - Canvas
   - Initial
   - ListRecipe
+  - Food_Button
   layers:
   - Default
   - TransparentFX
