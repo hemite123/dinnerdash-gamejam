@@ -180,6 +180,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.currency -= gamemanager.charge;
         gamemanager.charge = 0;
         gamemanager.rotate_image.SetActive(false);
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
     public void DeclineBuy(GameObject object_to_buy)
@@ -191,6 +192,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.charge = 0;
         DestroyImmediate(gamemanager.spawnVerification);
         DestroyImmediate(object_to_buy);
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
     public void AcceptChange(GameObject object_to_buy)
@@ -216,6 +218,7 @@ public class ButtonHandling : MonoBehaviour
                 childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255);
             }
         }
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
     public void DeleteChange(GameObject object_to_buy)
@@ -226,6 +229,7 @@ public class ButtonHandling : MonoBehaviour
         DestroyImmediate(GameObject.FindGameObjectWithTag("Notif"));
         DestroyImmediate(object_to_buy);
         gamemanager.rotate_image.SetActive(false);
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
     public void ExpandUi()
@@ -287,6 +291,13 @@ public class ButtonHandling : MonoBehaviour
             if (gamemanager.firstrunning)
             {
                 gamemanager.firstrunning = false;
+            }
+            else
+            {
+                AudioHandling adhand = AudioHandling.instance;
+                adhand.forcechange = true;
+                adhand.audio.clip = gamemanager.clipDays;
+                StartCoroutine(gamemanager.changeDayToNight("days"));
             }
             gamemanager.gameStarting = true;
             gamemanager.customerodds = gamemanager.normalodds;

@@ -7,6 +7,7 @@ using UnityEditor;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Cinemachine;
+using UnityEngine.Rendering.Universal;
 
 
 public class Gamemanager : MonoBehaviour
@@ -96,6 +97,11 @@ public class Gamemanager : MonoBehaviour
     public GameObject content_recipeS_fridge;
     public GameObject rotate_image;
     public List<FoodMenu> ownedFood = new List<FoodMenu>();
+    public GameObject fadeImage;
+    public AudioClip clipNight;
+    public AudioClip clipDays;
+    public Light2D daynight;
+    public GameObject lightCollection;
     private void Awake()
     {
         if (instance == null)
@@ -107,6 +113,7 @@ public class Gamemanager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        StartCoroutine(lightFate());
         currency += 10000000;
         event_system = GameObject.FindObjectOfType<EventSystem>(); 
         cam = Camera.main;
@@ -388,6 +395,10 @@ public class Gamemanager : MonoBehaviour
                 {
                     isDay = false;
                     GameObject.Find("daynight").GetComponent<TMPro.TextMeshProUGUI>().text = "Night";
+                    StartCoroutine(changeDayToNight("night"));
+                    AudioHandling adhand = AudioHandling.instance;
+                    adhand.audiochange = clipNight;
+                    adhand.forcechange = true;
                     customerodds += 0.05f;
                 }else if(timetospawnchar >= timer/8)
                 {
@@ -523,5 +534,36 @@ public class Gamemanager : MonoBehaviour
             yield return null;
         }
         addImage = false;
+    }
+
+    IEnumerator lightFate()
+    {
+        for (float i = 1; i >= 0; i -= Time.deltaTime)
+        {
+            fadeImage.GetComponent<Image>().color = new Color(0, 0, 0, i);
+            yield return null;
+        }
+    }
+
+    public IEnumerator changeDayToNight(string types)
+    {
+        if (types == "days")
+        {
+            for (float i = 0.4f; i <= 1; i += Time.deltaTime)
+            {
+                daynight.intensity = i;
+                yield return null;
+            }
+            lightCollection.SetActive(false);
+        }
+        else
+        {
+            for (float i = 1f; i >= 0.4f; i -= Time.deltaTime)
+            {
+                daynight.intensity = i;
+                yield return null;
+            }
+            lightCollection.SetActive(true);
+        }
     }
 }

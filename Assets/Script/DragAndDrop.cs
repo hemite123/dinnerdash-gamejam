@@ -26,6 +26,7 @@ public class DragAndDrop : MonoBehaviour
     float aditionaly = 0f;
     bool singleexecute = false;
     public LayerMask mask;
+    public bool delayclick = false;
 
     void Start()
     {
@@ -70,6 +71,11 @@ public class DragAndDrop : MonoBehaviour
         {
             if (draggedObject == null)
             {
+                if (delayclick)
+                {
+                    delayclick = false;
+                    return;
+                }
                 RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,0f,mask);
                 if (hit.collider != null)
                 {
