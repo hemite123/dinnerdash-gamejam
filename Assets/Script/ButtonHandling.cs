@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
-
+using System.Text;
 public class ButtonHandling : MonoBehaviour
 {
     Gamemanager gamemanager;
@@ -288,6 +288,64 @@ public class ButtonHandling : MonoBehaviour
                 StartCoroutine(gamemanager.notifDisplay("Select The Food You Want To Serve","error"));
                 return;
             }
+            List<UtensilType> requiredUtensil = new List<UtensilType>() { UtensilType.Desk,UtensilType.Stove,UtensilType.Service_Desk,UtensilType.Fridge,UtensilType.Trash };
+            //check utensil on map
+            SpriteHandler[] listUtensil = GameObject.FindObjectsOfType<SpriteHandler>();
+            if (listUtensil.Length > 0)
+            {
+                foreach (SpriteHandler shandle in listUtensil)
+                {
+                    if (shandle.dataSprite.GetType().Equals(typeof(Utensil)))
+                    {
+                        Utensil uten = (Utensil)shandle.dataSprite;
+                        if (requiredUtensil.Contains(uten.utensil_type))
+                        {
+                            requiredUtensil.Remove(uten.utensil_type);
+                        }
+
+                    }
+                }
+                if(requiredUtensil.Count > 0)
+                {
+                    StringBuilder message = new StringBuilder("Place ");
+                    int index = 0;
+                    foreach (UtensilType typeutensil in requiredUtensil)
+                    {
+                        if (typeutensil.Equals(UtensilType.Desk))
+                        {
+                            message.Append("Customer Desk");
+                        } else if (typeutensil.Equals(UtensilType.Fridge))
+                        {
+                            message.Append("Refrigenerator");
+                        }
+                        else if (typeutensil.Equals(UtensilType.Service_Desk))
+                        {
+                            message.Append("Service Desk");
+                        }
+                        else if (typeutensil.Equals(UtensilType.Trash))
+                        {
+                            message.Append("Trash Can");
+                        }
+                        else if (typeutensil.Equals(UtensilType.Stove))
+                        {
+                            message.Append("Stove");
+                        }
+                        //check if add index or ,
+                        if (index < requiredUtensil.Count)
+                        {
+                            message.Append(",");
+                        }
+                        index++;
+                    }
+                    StartCoroutine(gamemanager.notifDisplay(message.ToString(), "error"));
+                    return;
+                }
+            }
+            else
+            {
+                StartCoroutine(gamemanager.notifDisplay("Place Service Desk,Stove,Customer Desk,Trash Can,Refrigenerator", "error"));
+                return;
+            }
             if (gamemanager.firstrunning)
             {
                 gamemanager.firstrunning = false;
@@ -345,7 +403,7 @@ public class ButtonHandling : MonoBehaviour
         if(selectedSpawn != null)
         {
             GameObject insntate = Instantiate(gamemanager.sprite_food_and_ingredient, selectedSpawn, false);
-            insntate.transform.localScale = new Vector3(2, 2, 2);
+            insntate.transform.localScale = new Vector3(3, 3, 3);
             insntate.transform.position = selectedSpawn.transform.position;
             handle.refriitem.Add(insntate);
             FoodHandling data = insntate.GetComponent<FoodHandling>();

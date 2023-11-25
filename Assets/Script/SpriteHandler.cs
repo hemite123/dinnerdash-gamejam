@@ -190,8 +190,8 @@ public class SpriteHandler : MonoBehaviour
                         storeIngredient = new List<ScriptableObject>();
                         GameObject food_instantiate = Instantiate(gamemanager.sprite_food_and_ingredient, spawnhere, true);
                         food_instantiate.GetComponent<FoodHandling>().food_data = ingredient_cook;
-                        food_instantiate.transform.localScale = new Vector3(1.3f, 4f, 1f);
-                        food_instantiate.transform.localPosition = new Vector3(0, spawnhere.position.y + 0.25f, 0);
+                        food_instantiate.transform.localScale = new Vector3(1.3f, 1f, 1f);
+                        food_instantiate.transform.localPosition = new Vector3(0, spawnhere.localPosition.y, 0);
                         gamemanager.chunk_food.Add(food_instantiate);
                         break;
                     }

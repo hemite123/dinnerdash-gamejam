@@ -10,7 +10,7 @@ public class DragAndDrop : MonoBehaviour
     // Start is called before the first frame update
     
     public Transform draggedObject;
-    Vector2 lastPosition;
+    public Vector2 lastPosition;
     public bool objectOutside;
     public Vector2 screenSize;
     public Vector3 currentMousePosition;
@@ -130,107 +130,98 @@ public class DragAndDrop : MonoBehaviour
             }
             
         }else if (Input.GetMouseButtonUp(0) && draggedObject != null)
-        {
-            if (objectOutside)
+        { 
+            if(!objectOutside)
             {
-                objectOutside = false;
-                draggedObject.localPosition = lastPosition;
-                draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
-                lastPosition = Vector2.zero;
-            } 
-            if(gamemanager.buyingobject || gamemanager.changePlace){
-                draggedObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
-                foreach (Transform childObj in draggedObject.transform)
+                if (gamemanager.buyingobject || gamemanager.changePlace)
                 {
-                    if (childObj.tag.Equals("Chair"))
+                    draggedObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                    foreach (Transform childObj in draggedObject.transform)
                     {
-                        childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
-                    }
-                }
-                if (gamemanager.spawnVerification != null)
-                {
-                    gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y, draggedObject.localPosition.z);
-                    gamemanager.spawnVerification.SetActive(true);
-                }
-                draggedObject = null;
-                return;
-            }
-            else if (gamemanager.gameStarting)
-            {
-                if(setCustomer != null)
-                {
-                    //set chair and set all desk to prepare
-                    SpriteHandler spritehand = setCustomer.GetComponent<SpriteHandler>();
-                    CustomerHandler custHand = draggedObject.GetComponent<CustomerHandler>();
-                    FoodHandling foodHand = draggedObject.GetComponent<FoodHandling>();
-                    if(custHand != null)
-                    {
-                        spritehand.customer_sit = custHand.customer_list;
-                        spritehand.customer_data = custHand.customer_data;
-                        gamemanager.currentCustomer -= 1;
-                        //reindexing customer
-                        for(int i = 0;i < gamemanager.QueuePosition.Count; i++)
+                        if (childObj.tag.Equals("Chair"))
                         {
-                            (Vector3, bool) data = gamemanager.QueuePosition[i];
-                            gamemanager.QueuePosition[i] = (data.Item1, false); 
-                        }
-                        gamemanager.reindexing = true;
-                    }
-                    else if(foodHand != null)
-                    {
-                        if (foodHand.isIngredient && ((Utensil)spritehand.dataSprite).utensil_type.Equals(UtensilType.Stove))
-                        {
-                            //set for cooking time
-                            Ingredient ingredient = (Ingredient)foodHand.food_data;
-                            spritehand.ingredientOn = ingredient;
-                            spritehand.waitingtimeinsecond = ingredient.ingredient_cook_time;
-                            spritehand.start_waiting_time = true;
-                            spritehand.cookProseess = true;
-
-                        }
-                        else if(!foodHand.isIngredient && ((Utensil)spritehand.dataSprite).utensil_type.Equals(UtensilType.Desk))
-                        {
-                            for (int i = 0; i < spritehand.food_order.Count; i++)
-                            {
-                                (FoodMenu, bool) datafromarray = spritehand.food_order[i];
-                                if (datafromarray.Item1.Equals(foodHand.food_data) && !datafromarray.Item2)
-                                {
-                                    spritehand.food_order[i] = (datafromarray.Item1, true);
-                                    break;
-                                }
-                            }
-                        }
-                        if (foodHand.refrigenerator != null)
-                        {
-                            SpriteHandler refriFoodHandling = foodHand.refrigenerator.GetComponent<SpriteHandler>();
-                            List<GameObject> gorefitem = refriFoodHandling.refriitem;
-                            foreach (GameObject go in gorefitem)
-                            {
-                                if (go == draggedObject.gameObject)
-                                {
-                                    gorefitem.Remove(go);
-                                    break;
-                                }
-                            }
-                            refriFoodHandling.refriitem = gorefitem;
+                            childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
                         }
                     }
-                    setCustomer = null;
-                    
-                    
-                    DestroyImmediate(draggedObject.gameObject);
+                    if (gamemanager.spawnVerification != null)
+                    {
+                        gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y, draggedObject.localPosition.z);
+                        gamemanager.spawnVerification.SetActive(true);
+                    }
                     draggedObject = null;
                     return;
                 }
-                else
+                else if (gamemanager.gameStarting)
                 {
-                    setCustomer = null;
-                    draggedObject.transform.position = lastPosition;
-                    draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
-                    lastPosition = Vector2.zero;
+                    if (setCustomer != null)
+                    {
+                        //set chair and set all desk to prepare
+                        SpriteHandler spritehand = setCustomer.GetComponent<SpriteHandler>();
+                        CustomerHandler custHand = draggedObject.GetComponent<CustomerHandler>();
+                        FoodHandling foodHand = draggedObject.GetComponent<FoodHandling>();
+                        if (custHand != null)
+                        {
+                            spritehand.customer_sit = custHand.customer_list;
+                            spritehand.customer_data = custHand.customer_data;
+                            gamemanager.currentCustomer -= 1;
+                            //reindexing customer
+                            for (int i = 0; i < gamemanager.QueuePosition.Count; i++)
+                            {
+                                (Vector3, bool) data = gamemanager.QueuePosition[i];
+                                gamemanager.QueuePosition[i] = (data.Item1, false);
+                            }
+                            gamemanager.reindexing = true;
+                        }
+                        else if (foodHand != null)
+                        {
+                            if (foodHand.isIngredient && ((Utensil)spritehand.dataSprite).utensil_type.Equals(UtensilType.Stove))
+                            {
+                                //set for cooking time
+                                Ingredient ingredient = (Ingredient)foodHand.food_data;
+                                spritehand.ingredientOn = ingredient;
+                                spritehand.waitingtimeinsecond = ingredient.ingredient_cook_time;
+                                spritehand.start_waiting_time = true;
+                                spritehand.cookProseess = true;
+
+                            }
+                            else if (!foodHand.isIngredient && ((Utensil)spritehand.dataSprite).utensil_type.Equals(UtensilType.Desk))
+                            {
+                                for (int i = 0; i < spritehand.food_order.Count; i++)
+                                {
+                                    (FoodMenu, bool) datafromarray = spritehand.food_order[i];
+                                    if (datafromarray.Item1.Equals(foodHand.food_data) && !datafromarray.Item2)
+                                    {
+                                        spritehand.food_order[i] = (datafromarray.Item1, true);
+                                        break;
+                                    }
+                                }
+                            }
+                            if (foodHand.refrigenerator != null)
+                            {
+                                SpriteHandler refriFoodHandling = foodHand.refrigenerator.GetComponent<SpriteHandler>();
+                                List<GameObject> gorefitem = refriFoodHandling.refriitem;
+                                foreach (GameObject go in gorefitem)
+                                {
+                                    if (go == draggedObject.gameObject)
+                                    {
+                                        gorefitem.Remove(go);
+                                        break;
+                                    }
+                                }
+                                refriFoodHandling.refriitem = gorefitem;
+                            }
+                        }
+                        setCustomer = null;
+                        DestroyImmediate(draggedObject.gameObject);
+                        draggedObject = null;
+                        return;
+                    }
                 }
             }
+            objectOutside = false; 
+            draggedObject.transform.position = lastPosition;
             draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
+            lastPosition = Vector2.zero;
             foreach (Transform childObj in draggedObject.transform)
             {
                 if (childObj.tag.Equals("Chair"))

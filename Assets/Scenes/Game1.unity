@@ -852,7 +852,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &141104546
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3479,6 +3479,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   draggedObject: {fileID: 0}
+  lastPosition: {x: 0, y: 0}
   objectOutside: 0
   screenSize: {x: 0, y: 0}
   currentMousePosition: {x: 0, y: 0, z: 0}
@@ -3550,7 +3551,7 @@ MonoBehaviour:
   itemrefrigenerator: {fileID: 6238597779519281207, guid: 32787ed864ae3224696e9ac4196eba76, type: 3}
   closingtime: 0
   currenyUI: {fileID: 1522318442}
-  isTutorial: 0
+  isTutorial: 1
   notificaiton_error: {fileID: 2131969685}
   ui_Recipe: {fileID: 490032591}
   fill_ui_recipe: {fileID: 1641969313775066963, guid: 1b6b82a9fbeb0c64f950b3ba975b5763, type: 3}

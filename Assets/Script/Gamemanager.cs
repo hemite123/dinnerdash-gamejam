@@ -217,13 +217,6 @@ public class Gamemanager : MonoBehaviour
             {
                 image_buy.SetActive(false);
             }
-
-            if (!isDay)
-            {
-                Debug.Log("Night");
-
-                //Change Background Music
-            }
             if (Input.GetMouseButtonDown(0))
             {
                 RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
@@ -277,8 +270,8 @@ public class Gamemanager : MonoBehaviour
                             sprithandl.storeIngredient = new List<ScriptableObject>();
                             GameObject food_instantiate = Instantiate(sprite_food_and_ingredient, spawnhere, true);
                             food_instantiate.GetComponent<FoodHandling>().food_data = sprithandl.finalProduct;
-                            food_instantiate.transform.localScale = new Vector3(1.3f, 4f, 1f);
-                            food_instantiate.transform.localPosition = new Vector3(0, spawnhere.position.y + 0.25f, 0);
+                            food_instantiate.transform.localScale = new Vector3(1.3f, 1f, 1f);
+                            food_instantiate.transform.localPosition = new Vector3(0, spawnhere.localPosition.y, 0);
                             sprithandl.finalProduct = null;
                             sprithandl.onproc = false;
                             chunk_food.Add(food_instantiate);
