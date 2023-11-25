@@ -10,6 +10,7 @@ public class AudioHandling : MonoBehaviour
     public bool forcechange = false;
     public static AudioHandling instance;
     public AudioClip audiochange;
+    public float volume;
 
     private void Awake()
     {
@@ -43,7 +44,7 @@ public class AudioHandling : MonoBehaviour
         runningaudio = false;
         playing = true;
         float currentVolume = audio.volume;
-        while (currentVolume < 1)
+        while (currentVolume < volume)
         {
             audio.volume += 0.1f / 1f * Time.deltaTime / 1f;
             currentVolume = audio.volume;

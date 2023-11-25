@@ -114,7 +114,6 @@ public class Gamemanager : MonoBehaviour
     void Start()
     {
         StartCoroutine(lightFate());
-        currency += 10000000;
         event_system = GameObject.FindObjectOfType<EventSystem>(); 
         cam = Camera.main;
         lastProjectionsize = cam.orthographicSize;
