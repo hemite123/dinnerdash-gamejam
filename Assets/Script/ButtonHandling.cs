@@ -564,4 +564,11 @@ public class ButtonHandling : MonoBehaviour
             gamemanager.foodSelect.Add(foodMenu);
         }
     }
+
+    public void SkipTutorial()
+    {
+        gamemanager.isTutorial = false;
+        QueueDialog.instance.imagetutorial.transform.parent.parent.gameObject.SetActive(false);
+        gamemanager.currency += 5000;
+    }
 }

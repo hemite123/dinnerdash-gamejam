@@ -163,6 +163,7 @@ public class DragAndDrop : MonoBehaviour
                         {
                             spritehand.customer_sit = custHand.customer_list;
                             spritehand.customer_data = custHand.customer_data;
+                            gamemanager.customer_spawn.Remove(custHand);
                             gamemanager.currentCustomer -= 1;
                             //reindexing customer
                             for (int i = 0; i < gamemanager.QueuePosition.Count; i++)
@@ -220,13 +221,13 @@ public class DragAndDrop : MonoBehaviour
             }
             objectOutside = false; 
             draggedObject.transform.position = lastPosition;
-            draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
+            draggedObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
             lastPosition = Vector2.zero;
             foreach (Transform childObj in draggedObject.transform)
             {
                 if (childObj.tag.Equals("Chair"))
                 {
-                    childObj.GetComponent<SpriteRenderer>().color = Color.white;
+                    childObj.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
                 }
             }
             draggedObject = null;
@@ -263,7 +264,7 @@ public class DragAndDrop : MonoBehaviour
         gamemanager.floor.transform.localScale = new Vector3(scaleFactorX - 0.1f, scaleFactorY, 1);
         currentcollider = go;
         gamemanager.QueuePosition = new List<(Vector2, bool)>();
-        Vector2 firstpos = new Vector2(-screenSize.x + 1, -screenSize.y + 1);
+        Vector2 firstpos = new Vector2(-screenSize.x + 1, -screenSize.y + 2);
         aditionalx += 0.1f;
         aditionaly += 0.12f;
         for (int i = 0; i <= gamemanager.maxCustomer; i++)
@@ -301,13 +302,19 @@ public class DragAndDrop : MonoBehaviour
                                     if (customehandler.customer_list > data.utensil_max_use || spritehand.chairSetup)
                                     {
                                         objectOutside = true;
-                                        draggedObject.GetComponent<SpriteRenderer>().color = Color.red;
+                                        foreach(SpriteRenderer tf in customehandler.sr)
+                                        {
+                                            tf.color = Color.red;
+                                        }
                                     }
                                     else
                                     {
                                         objectOutside = false;
                                         setCustomer = result[0].transform.gameObject;
-                                        draggedObject.GetComponent<SpriteRenderer>().color = Color.green;
+                                        foreach (SpriteRenderer tf in customehandler.sr)
+                                        {
+                                            tf.color = Color.green;
+                                        }
                                     }
                                 }else if(foodHandler != null)
                                 {
@@ -475,7 +482,18 @@ public class DragAndDrop : MonoBehaviour
             setCustomer = null;
             if (gamemanager.gameStarting)
             {
-                draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
+                if (draggedObject.GetComponent<CustomerHandler>())
+                {
+                    foreach (SpriteRenderer tf in draggedObject.GetComponent<CustomerHandler>().sr)
+                    {
+                        tf.color = Color.white;
+                    }
+                }
+                else
+                {
+                    draggedObject.GetComponent<SpriteRenderer>().color = Color.white;
+                }
+                
             }
             else
             {

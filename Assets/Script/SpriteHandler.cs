@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.UI;
 
 //Fix the scaling
@@ -41,6 +42,7 @@ public class SpriteHandler : MonoBehaviour
     public GameObject stove_ingredient;
     public bool onproc = false;
     public int maxingredientout = 2;
+    public string color = "green";
     bool reset = false;
     private void Start()
     {
@@ -72,6 +74,15 @@ public class SpriteHandler : MonoBehaviour
         {
             current_waiting_time += Time.deltaTime;
             waiting_time.GetComponent<Image>().fillAmount -= (1 / waitingtimeinsecond) * Time.deltaTime;
+            if(current_waiting_time >= waitingtimeinsecond/2 && color.Equals("green"))
+            {
+                color = "yellow";
+                StartCoroutine(halfAngry());
+            }else if(current_waiting_time >= waitingtimeinsecond * 0.75f && color.Equals("yellow"))
+            {
+                color = "red";
+                StartCoroutine(fullAngry());
+            }
             if(food_order.Count <= 0)
             {
                 if (current_waiting_time >= waitingtimeinsecond)
@@ -240,7 +251,7 @@ public class SpriteHandler : MonoBehaviour
                     if (!dataChair.Value)
                     {
                         Transform transform = dataChair.Key;
-                        transform.GetComponent<SpriteRenderer>().sprite = cust.customer_img;
+                        transform.GetComponent<SpriteRenderer>().sprite = cust.customer_img.Find(x => x.action =="sit").img_sprite;
                         chairData[dataChair.Key] = true;
                         if (ishaveexclusive)
                         {
@@ -319,8 +330,9 @@ public class SpriteHandler : MonoBehaviour
                         string temp_current_do = action.Key;
                         if (temp_current_do.Equals("order_time"))
                         {
-                            yield return new WaitForSeconds(0.2f);
-                            popup.SetActive(true);
+                            yield return new WaitForSeconds(1f);
+                            //popup.SetActive(true);
+                            SpriteHandlingCustomer("order_up");
                             current_do = action.Key;
                             start_waiting_time = true;
                             break;
@@ -364,7 +376,7 @@ public class SpriteHandler : MonoBehaviour
                             //calculate the customer give
                             foreach (Customer customer in customer_data)
                             {
-                                total_this_sprite += Random.Range(customer.minSalary, customer.maxSalary);
+                                total_this_sprite += UnityEngine.Random.Range(customer.minSalary, customer.maxSalary);
                             }
                             gamemanager.todayEarning += total_this_sprite;
                             //display text curreny
@@ -406,6 +418,7 @@ public class SpriteHandler : MonoBehaviour
     public void RefreshCustomer()
     {
         customer_sit = 0;
+        color = "green";
         processTime = false;
         popup.SetActive(false);
         current_waiting_time = 0;
@@ -433,6 +446,51 @@ public class SpriteHandler : MonoBehaviour
         current_do = "";
         gamemanager.totalcustomerinfield -= 1;
         food_order = new List<(FoodMenu, bool)>();
+    }
+
+
+    public void SpriteHandlingCustomer(string action)
+    {
+        List<Transform> keyslist = new List<Transform>(chairData.Keys);
+        int index = 0;
+        foreach (Customer cust in customer_data)
+        {
+            Transform transform = keyslist[index];
+            transform.GetComponent<SpriteRenderer>().sprite = cust.customer_img.Find(x => x.action == action).img_sprite;
+            index++;
+        }
+    }
+
+    IEnumerator halfAngry()
+    {
+        while (color.Equals("yellow"))
+        {
+            SpriteHandlingCustomer("angsithalf");
+            yield return new WaitForSeconds(1f);
+            if (current_do.Equals("order_time"))
+            {
+                SpriteHandlingCustomer("order_up");
+            }
+            yield return new WaitForSeconds(5f);
+            yield return null;
+        }
+        StopCoroutine(halfAngry());
+    }
+
+    IEnumerator fullAngry()
+    {
+        while (color.Equals("red"))
+        {
+            SpriteHandlingCustomer("angsit");
+            yield return new WaitForSeconds(0.5f);
+            if (current_do.Equals("order_time"))
+            {
+                SpriteHandlingCustomer("order_up");
+            }
+            yield return new WaitForSeconds(3f);
+            yield return null;
+        }
+        StopCoroutine(fullAngry());
     }
 
 }

@@ -12,19 +12,15 @@ using UnityEngine.Rendering.Universal;
 
 public class Gamemanager : MonoBehaviour
 {
-
+    //clean up variable into one line
     public static Gamemanager instance;
-    public float timer = 180;
-    public float currenttimer = 0;
+    public float timer = 180, currenttimer = 0;
     public Transform tick;
     bool isDay = true;
     public bool gameStarting = false;
     public DragAndDrop DragAndDrop_Instance;
-    public GameObject button_utensil;
-    public GameObject content_utensi;
-    public int days = 1;
-    [HideInInspector]
-    public int currency = 0;
+    public GameObject button_utensil, content_utensi;
+    public int days = 1, currency = 0;
     public bool buyingobject = false;
     public int charge = 0;
     public bool updatingMap = true;
@@ -80,7 +76,8 @@ public class Gamemanager : MonoBehaviour
     public int totalcustomerinfield = 0;
     public float additional;
     public CinemachineVirtualCamera camera;
-    public List<GameObject> chunk_food = new List<GameObject>();
+    public List<GameObject> chunk_food= new List<GameObject>();
+    public List<CustomerHandler> customer_spawn = new List<CustomerHandler>();
     public bool firstrunning = true;
     public QueueDialog quedialog;
     public GameObject displayEarning;
@@ -113,6 +110,7 @@ public class Gamemanager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        currency += 1000000;
         StartCoroutine(lightFate());
         event_system = GameObject.FindObjectOfType<EventSystem>(); 
         cam = Camera.main;
@@ -282,6 +280,14 @@ public class Gamemanager : MonoBehaviour
                         //instantiate the food to place 
                     }
                 }
+                else
+                {
+                    if (refrigenerator != null)
+                    {
+                        uiRefrigenerator.SetActive(false);
+                        refrigenerator = null;
+                    }
+                }
             }
            
             if(food_list_ui.transform.childCount <= foodSelect.Count && !addImage)
@@ -304,8 +310,14 @@ public class Gamemanager : MonoBehaviour
 
             if (reindexing)
             {
-                foreach (CustomerHandler customer in GameObject.FindObjectsOfType<CustomerHandler>())
+                reindexing = false;
+                int index = maxCustomer;
+                foreach (CustomerHandler customer in customer_spawn)
                 {
+                    foreach(SpriteRenderer srend in customer.sr)
+                    {
+                        srend.sortingOrder = index; 
+                    }
                     for (int i = 0; i < QueuePosition.Count; i++)
                     {
                         (Vector3, bool) data = QueuePosition[i];
@@ -318,8 +330,9 @@ public class Gamemanager : MonoBehaviour
                         }
 
                     }
+                    index--;
                 }
-                reindexing = false;
+                
             }
            
 
@@ -490,8 +503,9 @@ public class Gamemanager : MonoBehaviour
         currentCustomer += 1;
         timertowait += 5f;
         GameObject go = Instantiate(customerSpawning);
-        int CustomerRandom = UnityEngine.Random.Range(1, maxchair);
+        int CustomerRandom = UnityEngine.Random.Range(1, maxchair+1);
         go.GetComponent<CustomerHandler>().customer_list = CustomerRandom;
+        go.transform.localScale = new Vector3(1, 1, 0);
         for (int j = 0; j < QueuePosition.Count; j++)
         {
             if (!QueuePosition[j].Item2)
@@ -502,9 +516,13 @@ public class Gamemanager : MonoBehaviour
 
             }
         }
-        go.transform.localScale = new Vector3(1, 1, 0);
         totalcustomerinfield += 1;
-
+        for (int i = 0; i < QueuePosition.Count; i++)
+        {
+            (Vector3, bool) data = QueuePosition[i];
+            QueuePosition[i] = (data.Item1, false);
+        }
+        customer_spawn.Add(go.GetComponent<CustomerHandler>());
     }
 
     IEnumerator removeallRecipeFridge()

@@ -8,13 +8,14 @@ using System;
 public class Customer : ScriptableObject,IComparable<Customer>
 {
     public string customer_name;
-    public Sprite customer_img;
+    public List<SpriteHandling> customer_img = new List<SpriteHandling>();
     public CustomerType customerType;
     public int minSalary;
     public int maxSalary;
     public float CustomerSpawnRarity;
     public float CustomerAngryTime;
     public float CustomerAngryWaitingTime;
+    public float ratingJoin;
 
    
 
@@ -38,4 +39,13 @@ public class Customer : ScriptableObject,IComparable<Customer>
 public enum CustomerType
 {
     VIP,NORMAL,BRANDED,CRAZYRICH
+}
+
+[System.Serializable]
+public struct SpriteHandling
+{
+    public string action;
+    public Sprite img_sprite;
+    public bool isAnimation;
+    public Animation animation;
 }
