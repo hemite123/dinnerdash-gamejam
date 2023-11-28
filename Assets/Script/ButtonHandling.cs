@@ -15,7 +15,7 @@ public class ButtonHandling : MonoBehaviour
     int openImage = 1;
     bool buttonselectRecipe;
     public GameObject food_scroll_View;
-    public GameObject utensil_scroll_view;
+    public GameObject utensil_scroll_view,item_scroll_view;
     public Sprite equipe_sprite;
     public Sprite own_sprite;
     public Sprite unonw_sprite;
@@ -72,6 +72,7 @@ public class ButtonHandling : MonoBehaviour
                 MaxDesk = utensil.utensil_max_use;
             }
             gamemanager.buyingobject = true;
+            gamemanager.quedialog.DisplayingTutorial("modificationUtensil");
             GameObject gameObject = Instantiate(utensil.utensil_gameobject, new Vector3(0, 0, 0), Quaternion.identity);
             gameObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
             gamemanager.draggingbuying = gameObject;
@@ -520,10 +521,20 @@ public class ButtonHandling : MonoBehaviour
         {
             utensil_scroll_view.SetActive(false);
             food_scroll_View.gameObject.SetActive(true);
+            item_scroll_view.SetActive(false);
         }else if (datastring.Equals("Utensil"))
         {
             utensil_scroll_view.gameObject.SetActive(true);
             food_scroll_View.SetActive(false);
+            item_scroll_view.SetActive(false);
+
+        }
+        else if (datastring.Equals("Item"))
+        {
+            utensil_scroll_view.gameObject.SetActive(false);
+            food_scroll_View.SetActive(false);
+            item_scroll_view.SetActive(true);
+
         }
     }
 
@@ -570,5 +581,36 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.isTutorial = false;
         QueueDialog.instance.imagetutorial.transform.parent.parent.gameObject.SetActive(false);
         gamemanager.currency += 5000;
+    }
+
+    public void BuyItem(Item item,GameObject button_food)
+    {
+        if (gamemanager.itemOwned.Contains(item))
+        {
+            StartCoroutine(gamemanager.notifDisplay("Item Already Bought", "error"));
+            return;
+        }
+        if(gamemanager.currency >= item.price_item)
+        {
+            StartCoroutine(gamemanager.notifDisplay("Transaction Success", "noterror"));
+            button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = equipe_sprite;
+            gamemanager.itemOwned.Add(item);
+            if (item.increase_chance_spawn > 0)
+            {
+                gamemanager.normalodds += item.increase_chance_spawn;
+            }else if(item.increase_chance_customer > 0)
+            {
+                foreach(Customer custom in gamemanager.customer_data)
+                {
+                    custom.CustomerSpawnRarity += item.increase_chance_customer;
+                }
+                gamemanager.customer_data.Sort();
+            }
+        }
+        else
+        {
+            StartCoroutine(gamemanager.notifDisplay("Not Enough Money", "error"));
+        }
+        
     }
 }

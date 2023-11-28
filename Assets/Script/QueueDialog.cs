@@ -12,6 +12,7 @@ public class QueueDialog : MonoBehaviour
     public List<Quest> quests = new List<Quest> ();
     public Queue<string> queue = new Queue<string>();
     public Queue<Image> queueimages = new Queue<Image>();
+    public List<TutorialActionDo> tutorialAction = new List<TutorialActionDo>();
     public TMPro.TextMeshProUGUI textChat;
     public bool nextInteraction;
     public static QueueDialog instance;
@@ -118,6 +119,25 @@ public class QueueDialog : MonoBehaviour
         index++;    
         yield break;
     }
+
+    public void DisplayingTutorial(string actioname)
+    {
+        //check here
+        int index = tutorialAction.FindIndex(x => x.actionname.Equals(actioname));
+        TutorialActionDo changed = tutorialAction[index];
+        TutorialActionDo? display = changed;
+        if(!display.HasValue || display.Value.istrigger)
+        {
+            return;
+        }
+        if (changed.isNeedPause) 
+        {
+            Time.timeScale = 0;
+        }
+        changed.istrigger = true;
+        changed.displaying.SetActive(true);
+        tutorialAction[index] = changed;
+    }
 }
 
 [System.Serializable]
@@ -150,4 +170,13 @@ public struct QuestData
         this.name_quest = name;
         this.isdone = isdones;
     }
+}
+
+[System.Serializable]
+public struct TutorialActionDo
+{
+    public string actionname;
+    public bool istrigger;
+    public GameObject displaying;
+    public bool isNeedPause;
 }

@@ -21,17 +21,17 @@ public class Customer : ScriptableObject,IComparable<Customer>
 
     public int CompareTo(Customer other)
     {
-        if (this.CustomerSpawnRarity < other.CustomerSpawnRarity)
-        {
-            return 0;
-        }
-        else if (this.CustomerSpawnRarity > other.CustomerSpawnRarity)
+        if (this.CustomerSpawnRarity >= other.CustomerSpawnRarity)
         {
             return 1;
         }
-        else
+        else if (this.CustomerSpawnRarity <= other.CustomerSpawnRarity)
         {
             return -1;
+        }
+        else
+        {
+            return 0;
         }
     }
 }
@@ -47,5 +47,5 @@ public struct SpriteHandling
     public string action;
     public Sprite img_sprite;
     public bool isAnimation;
-    public Animation animation;
+    public RuntimeAnimatorController animation;
 }

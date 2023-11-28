@@ -76,7 +76,7 @@ public class DragAndDrop : MonoBehaviour
                     delayclick = false;
                     return;
                 }
-                RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero,0f,mask);
+                RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 0f, mask);
                 if (hit.collider != null)
                 {
                     Debug.Log(hit.transform.name);
@@ -88,7 +88,7 @@ public class DragAndDrop : MonoBehaviour
                     {
                         return;
                     }
-                    if(!gamemanager.changePlace && !gamemanager.buyingobject && !gamemanager.gameStarting)
+                    if (!gamemanager.changePlace && !gamemanager.buyingobject && !gamemanager.gameStarting)
                     {
                         gamemanager.changePlace = true;
                         GameObject go_verification = Instantiate(gamemanager.verificationEdit);
@@ -128,30 +128,12 @@ public class DragAndDrop : MonoBehaviour
                     gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y, draggedObject.localPosition.z);
                 }
             }
-            
-        }else if (Input.GetMouseButtonUp(0) && draggedObject != null)
-        { 
-            if(!objectOutside)
+
+        } else if (Input.GetMouseButtonUp(0) && draggedObject != null)
+        {
+            if (!objectOutside)
             {
-                if (gamemanager.buyingobject || gamemanager.changePlace)
-                {
-                    draggedObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
-                    foreach (Transform childObj in draggedObject.transform)
-                    {
-                        if (childObj.tag.Equals("Chair"))
-                        {
-                            childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
-                        }
-                    }
-                    if (gamemanager.spawnVerification != null)
-                    {
-                        gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y, draggedObject.localPosition.z);
-                        gamemanager.spawnVerification.SetActive(true);
-                    }
-                    draggedObject = null;
-                    return;
-                }
-                else if (gamemanager.gameStarting)
+                if (gamemanager.gameStarting)
                 {
                     if (setCustomer != null)
                     {
@@ -219,17 +201,50 @@ public class DragAndDrop : MonoBehaviour
                     }
                 }
             }
-            objectOutside = false; 
-            draggedObject.transform.position = lastPosition;
-            draggedObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
-            lastPosition = Vector2.zero;
-            foreach (Transform childObj in draggedObject.transform)
+            if (gamemanager.buyingobject || gamemanager.changePlace)
             {
-                if (childObj.tag.Equals("Chair"))
+                draggedObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                foreach (Transform childObj in draggedObject.transform)
                 {
-                    childObj.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+                    if (childObj.tag.Equals("Chair"))
+                    {
+                        childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                    }
+                }
+                if (objectOutside)
+                {
+                    draggedObject.transform.position = lastPosition;
+                }
+                if (gamemanager.spawnVerification != null)
+                {
+                    gamemanager.spawnVerification.transform.localPosition = new Vector3(draggedObject.localPosition.x, draggedObject.localPosition.y, draggedObject.localPosition.z);
+                    gamemanager.spawnVerification.SetActive(true);
+                }
+                draggedObject = null;
+                objectOutside = false;
+                return;
+            }
+            if (draggedObject.GetComponent<FoodHandling>() || !draggedObject.GetComponent<CustomerHandler>())
+            {
+                draggedObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+                foreach (Transform childObj in draggedObject.transform)
+                {
+                    if (childObj.tag.Equals("Chair"))
+                    {
+                        childObj.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+                    }
                 }
             }
+            else
+            {
+                draggedObject.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 0);
+                foreach (Transform childObj in draggedObject.transform)
+                {
+                    childObj.GetComponent<SpriteRenderer>().color = new Color(1, 1, 1, 1);
+                }
+            }
+            draggedObject.transform.position = lastPosition;
+            lastPosition = Vector2.zero;
             draggedObject = null;
         }
     }

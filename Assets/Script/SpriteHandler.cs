@@ -44,6 +44,7 @@ public class SpriteHandler : MonoBehaviour
     public int maxingredientout = 2;
     public string color = "green";
     bool reset = false;
+    Animator anim;
     private void Start()
     {
         lastlocalscale = transform.localScale;
@@ -339,6 +340,7 @@ public class SpriteHandler : MonoBehaviour
                         }
                         else if (temp_current_do.Equals("order_wait"))
                         {
+                            SpriteHandlingCustomer("sit");
                             popup.SetActive(false);
                             if (!waiting_time.active)
                             {
@@ -360,7 +362,15 @@ public class SpriteHandler : MonoBehaviour
                         }
                         else if (temp_current_do.Equals("order_eat"))
                         {
+                            SpriteHandlingCustomer("eating");
                             yield return new WaitForSeconds(5f);
+                            List<KeyValuePair<Transform, bool>> loopChair = new List<KeyValuePair<Transform, bool>>(chairData);
+                            foreach (KeyValuePair<Transform, bool> dataChair in loopChair)
+                            {
+                                dataChair.Key.GetComponent<Animator>().runtimeAnimatorController = null;
+                                dataChair.Key.GetComponent<SpriteRenderer>().sprite = defaultSprite;
+                                chairData[dataChair.Key] = false;
+                            }
                             popup.SetActive(true);
                             foreach (GameObject imgord in imageOrder)
                             {
@@ -379,32 +389,12 @@ public class SpriteHandler : MonoBehaviour
                                 total_this_sprite += UnityEngine.Random.Range(customer.minSalary, customer.maxSalary);
                             }
                             gamemanager.todayEarning += total_this_sprite;
-                            //display text curreny
-                            customer_sit = 0;
-                            List<string> listkeycustomerinteraction = new List<string>(customerInteraction.Keys);
-                            foreach (string customerinteractionkey in listkeycustomerinteraction)
-                            {
-                                customerInteraction[customerinteractionkey] = false;
-                            }
-                            List<KeyValuePair<Transform, bool>> loopChair = new List<KeyValuePair<Transform, bool>>(chairData);
-                            foreach (KeyValuePair<Transform, bool> dataChair in loopChair)
-                            {
-                                Transform transform = dataChair.Key;
-                                transform.GetComponent<SpriteRenderer>().sprite = defaultSprite;
-                                chairData[dataChair.Key] = false;
-                            }
-                            current_do = "";
-                            processTime = false;
-                            chairSetup = false;
-                            gamemanager.customereat += 1;
-                            waitingtimeinsecond = 0;
-                            food_order = new List<(FoodMenu, bool)>();
                             salary_get.GetComponent<Text>().text = "$ " + total_this_sprite.ToString();
                             salary_get.SetActive(true);
+                            RefreshCustomer();
                             yield return new WaitForSeconds(0.6f);
                             total_this_sprite = 0;
-                            salary_get.SetActive(false);
-                            gamemanager.totalcustomerinfield -= 1;
+                            salary_get.SetActive(false); 
                             break;
                             //reset all stats
                         }
@@ -456,7 +446,15 @@ public class SpriteHandler : MonoBehaviour
         foreach (Customer cust in customer_data)
         {
             Transform transform = keyslist[index];
-            transform.GetComponent<SpriteRenderer>().sprite = cust.customer_img.Find(x => x.action == action).img_sprite;
+            SpriteHandling getdata = cust.customer_img.Find(x => x.action == action);
+            if (getdata.isAnimation)
+            {
+                transform.GetComponent<Animator>().runtimeAnimatorController = getdata.animation;
+            }
+            else
+            {
+                transform.GetComponent<SpriteRenderer>().sprite = getdata.img_sprite;
+            }
             index++;
         }
     }

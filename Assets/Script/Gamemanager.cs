@@ -99,6 +99,9 @@ public class Gamemanager : MonoBehaviour
     public AudioClip clipDays;
     public Light2D daynight;
     public GameObject lightCollection;
+    public List<Item> itemOwned = new List<Item>();
+    public GameObject content_item;
+
     private void Awake()
     {
         if (instance == null)
@@ -148,8 +151,10 @@ public class Gamemanager : MonoBehaviour
                 clone.transform.localScale = new Vector3(1, 1, 1);
             }else if (obj.GetType().Equals(typeof(Customer)))
             {
-                customer_data.Add((Customer)obj);
-            }else if (obj.GetType().Equals(typeof(FoodMenu)))
+                customer_data.Add((Customer)Instantiate(obj));
+               
+            }
+            else if (obj.GetType().Equals(typeof(FoodMenu)))
             {
                 FoodMenu uten = obj as FoodMenu;
                 GameObject clone = Instantiate(food_button, content_food.transform, true);
@@ -181,6 +186,32 @@ public class Gamemanager : MonoBehaviour
                 }
                 clone.transform.localScale = new Vector3(1, 1, 1);
             }
+            else if (obj.GetType().Equals(typeof(Item)))
+            {
+                Item uten = obj as Item;
+                GameObject clone = Instantiate(food_button, content_item.transform, true);
+                clone.GetComponent<Button>().onClick.AddListener(delegate { button_hand.BuyItem(uten, clone); });
+                foreach (Transform go in clone.transform)
+                {
+                    if (go.GetComponent<Image>() && !go.name.Equals("ImgChecked"))
+                    {
+                        go.GetComponent<Image>().sprite = uten.item_img;
+                    }
+                    else if (go.name.Equals("ImgChecked"))
+                    {
+                        go.GetComponent<Image>().sprite = button_hand.unonw_sprite;
+                    }
+                    else if (go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("FoodName"))
+                    {
+                        go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.itemname;
+                    }
+                    else if (go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("PriceFood"))
+                    {
+                        go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.price_item.ToString();
+                    }
+                }
+                clone.transform.localScale = new Vector3(1, 1, 1);
+            }
             else if (obj.GetType().Equals(typeof(Ingredient)))
             {
                 Ingredient uten = obj as Ingredient;
@@ -196,7 +227,7 @@ public class Gamemanager : MonoBehaviour
             }
         }
         customer_data.Sort();
-        customer_data = customer_data;
+
     }
 
     // Update is called once per frame
@@ -282,7 +313,7 @@ public class Gamemanager : MonoBehaviour
                 }
                 else
                 {
-                    if (refrigenerator != null)
+                    if (refrigenerator != null && !event_system.IsPointerOverGameObject())
                     {
                         uiRefrigenerator.SetActive(false);
                         refrigenerator = null;
@@ -404,7 +435,7 @@ public class Gamemanager : MonoBehaviour
                     AudioHandling adhand = AudioHandling.instance;
                     adhand.audiochange = clipNight;
                     adhand.forcechange = true;
-                    customerodds += 0.05f;
+                    customerodds += 5f;
                 }else if(timetospawnchar >= timer/8)
                 {
                     timetospawnchar = 0;
@@ -438,7 +469,6 @@ public class Gamemanager : MonoBehaviour
                     isDay = true;
                     closingtime = false;
                     customerodds = 0;
-                    normalodds += 0.1f;
                     StartCoroutine(removeallRecipeFridge());
                 }
                 
