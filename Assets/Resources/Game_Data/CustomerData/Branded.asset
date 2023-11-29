@@ -47,7 +47,7 @@ MonoBehaviour:
     isAnimation: 1
     animation: {fileID: 9100000, guid: b56f92d50d4434a49abdf56f5a90b2f6, type: 2}
   customerType: 2
-  minSalary: 50
+  minSalary: 500
   maxSalary: 1000
   CustomerSpawnRarity: 2.5
   CustomerAngryTime: 3.5

@@ -260,6 +260,7 @@ public class Gamemanager : MonoBehaviour
                             return;
                         }
                         refrigenerator = hit.transform.gameObject;
+                        quedialog.DisplayingTutorial("openFridge");
                         uiRefrigenerator.SetActive(true);
                         return;
                     }
@@ -435,7 +436,7 @@ public class Gamemanager : MonoBehaviour
                     AudioHandling adhand = AudioHandling.instance;
                     adhand.audiochange = clipNight;
                     adhand.forcechange = true;
-                    customerodds += 5f;
+                    customerodds += 2.5f;
                 }else if(timetospawnchar >= timer/8)
                 {
                     timetospawnchar = 0;

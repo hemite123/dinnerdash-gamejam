@@ -77,12 +77,12 @@ public class ButtonHandling : MonoBehaviour
             gameObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
             gamemanager.draggingbuying = gameObject;
             GameObject go_verification = Instantiate(gamemanager.verification);
-            gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+            gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 130);
             foreach (Transform childObj in gameObject.transform)
             {
                 if (childObj.tag.Equals("Chair"))
                 {
-                    childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                    childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 130);
                 }
             }
             go_verification.transform.localPosition = gameObject.transform.localPosition + new Vector3(0, 0, 0);
@@ -222,8 +222,9 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
-    public void DeleteChange(GameObject object_to_buy)
+    public void DeleteChange(GameObject object_to_buy,int currenct)
     {
+        gamemanager.currency += currenct;
         gamemanager.changePlace = false;
         gamemanager.draggingbuying = null;
         gamemanager.addUtensil = false;
@@ -522,7 +523,9 @@ public class ButtonHandling : MonoBehaviour
             utensil_scroll_view.SetActive(false);
             food_scroll_View.gameObject.SetActive(true);
             item_scroll_view.SetActive(false);
-        }else if (datastring.Equals("Utensil"))
+            QueueDialog.instance.DisplayingTutorial("FoodSelect");
+        }
+        else if (datastring.Equals("Utensil"))
         {
             utensil_scroll_view.gameObject.SetActive(true);
             food_scroll_View.SetActive(false);
@@ -534,6 +537,7 @@ public class ButtonHandling : MonoBehaviour
             utensil_scroll_view.gameObject.SetActive(false);
             food_scroll_View.SetActive(false);
             item_scroll_view.SetActive(true);
+            QueueDialog.instance.DisplayingTutorial("ItemSelect");
 
         }
     }
@@ -579,6 +583,7 @@ public class ButtonHandling : MonoBehaviour
     public void SkipTutorial()
     {
         gamemanager.isTutorial = false;
+        QueueDialog.instance.skipActionTutoral = true;
         QueueDialog.instance.imagetutorial.transform.parent.parent.gameObject.SetActive(false);
         gamemanager.currency += 5000;
     }
@@ -612,5 +617,14 @@ public class ButtonHandling : MonoBehaviour
             StartCoroutine(gamemanager.notifDisplay("Not Enough Money", "error"));
         }
         
+    }
+
+    public void CloseActionTutorial(TutorialActionDo tad)
+    {
+        if (tad.isNeedPause)
+        {
+            Time.timeScale = 1;
+        }
+        tad.displaying.SetActive(false);
     }
 }

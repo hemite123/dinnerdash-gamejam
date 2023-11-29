@@ -23,6 +23,9 @@ public class QueueDialog : MonoBehaviour
     public int indexquest = 0;
     public GameObject imagetutorial;
     public bool skipText = false;
+    public bool skipActionTutoral = false;
+    public List<Sprite> randomselect = new List<Sprite>();
+    public GameObject imageCharaRandom;
     private void Awake()
     {
         if(instance == null)
@@ -45,6 +48,7 @@ public class QueueDialog : MonoBehaviour
     public IEnumerator NextTutorial()
     {
         skipText = false;
+        imageCharaRandom.GetComponent<Image>().sprite = randomselect[UnityEngine.Random.Range(0, randomselect.Count - 1)];
         imagetutorial.SetActive(false);
         if(queue.Count == 0)
         {
@@ -126,7 +130,7 @@ public class QueueDialog : MonoBehaviour
         int index = tutorialAction.FindIndex(x => x.actionname.Equals(actioname));
         TutorialActionDo changed = tutorialAction[index];
         TutorialActionDo? display = changed;
-        if(!display.HasValue || display.Value.istrigger)
+        if(!display.HasValue || display.Value.istrigger || skipActionTutoral)
         {
             return;
         }
@@ -136,6 +140,7 @@ public class QueueDialog : MonoBehaviour
         }
         changed.istrigger = true;
         changed.displaying.SetActive(true);
+        changed.displaying.transform.GetComponentInChildren<Button>().onClick.AddListener(delegate { ButtonHandling.instance.CloseActionTutorial(changed); });
         tutorialAction[index] = changed;
     }
 }

@@ -91,19 +91,20 @@ public class DragAndDrop : MonoBehaviour
                     if (!gamemanager.changePlace && !gamemanager.buyingobject && !gamemanager.gameStarting)
                     {
                         gamemanager.changePlace = true;
+                        QueueDialog.instance.DisplayingTutorial("modificationUtensilChange");
                         GameObject go_verification = Instantiate(gamemanager.verificationEdit);
                         go_verification.transform.GetChild(0).GetChild(0).GetComponent<Button>().onClick.AddListener(delegate { ButtonHandling.instance.AcceptChange(hit.transform.gameObject); });
-                        go_verification.transform.GetChild(0).GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { ButtonHandling.instance.DeleteChange(hit.transform.gameObject); });
+                        go_verification.transform.GetChild(0).GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { ButtonHandling.instance.DeleteChange(hit.transform.gameObject, ((Utensil)hit.transform.GetComponent<SpriteHandler>().dataSprite).utensil_price); });
                         gamemanager.spawnVerification = go_verification;
                         go_verification.transform.localPosition = hit.transform.localPosition + new Vector3(0, 0, 0);
                         gamemanager.draggingbuying = hit.transform.gameObject;
                         gamemanager.draggingbuying.GetComponent<SpriteRenderer>().sortingOrder = 3;
-                        gamemanager.draggingbuying.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                        gamemanager.draggingbuying.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 130);
                         foreach (Transform childObj in gamemanager.draggingbuying.transform)
                         {
                             if (childObj.tag.Equals("Chair"))
                             {
-                                childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                                childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 130);
                             }
                         }
                         gamemanager.rotate_image.SetActive(true);
@@ -159,7 +160,7 @@ public class DragAndDrop : MonoBehaviour
                         {
                             if (foodHand.isIngredient && ((Utensil)spritehand.dataSprite).utensil_type.Equals(UtensilType.Stove))
                             {
-                                //set for cooking time
+                                //set for cooking time  
                                 Ingredient ingredient = (Ingredient)foodHand.food_data;
                                 spritehand.ingredientOn = ingredient;
                                 spritehand.waitingtimeinsecond = ingredient.ingredient_cook_time;
@@ -334,6 +335,7 @@ public class DragAndDrop : MonoBehaviour
                                 }else if(foodHandler != null)
                                 {
                                     #region Cooking Process
+                                    QueueDialog.instance.DisplayingTutorial("inputStove");
                                     if (foodHandler.isIngredient && data.utensil_type.Equals(UtensilType.Stove))
                                     {
                                         if(spritehand.finalProduct == null)
