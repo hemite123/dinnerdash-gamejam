@@ -405,7 +405,8 @@ public class ButtonHandling : MonoBehaviour
         if(selectedSpawn != null)
         {
             GameObject insntate = Instantiate(gamemanager.sprite_food_and_ingredient, selectedSpawn, false);
-            insntate.transform.localScale = new Vector3(3, 3, 3);
+            insntate.transform.localScale = new Vector3(4, 4, 6);
+            insntate.GetComponent<BoxCollider2D>().size = new Vector2(1,1);
             insntate.transform.position = selectedSpawn.transform.position;
             handle.refriitem.Add(insntate);
             FoodHandling data = insntate.GetComponent<FoodHandling>();
@@ -603,7 +604,8 @@ public class ButtonHandling : MonoBehaviour
             if (item.increase_chance_spawn > 0)
             {
                 gamemanager.normalodds += item.increase_chance_spawn;
-            }else if(item.increase_chance_customer > 0)
+            } 
+            if(item.increase_chance_customer > 0)
             {
                 foreach(Customer custom in gamemanager.customer_data)
                 {

@@ -34,16 +34,16 @@ public class SpriteHandler : MonoBehaviour
     public ScriptableObject finalProduct;
     public int cookStep = 0;
     public Image image_food;
-    public bool setImage;
+    public bool setImage,pauseUpdateSprite, runningTimerCorut;
     Vector3 lastlocalscale;
     public float lastscale;
     public List<GameObject> refriitem = new List<GameObject>();
     List<GameObject> imageOrder = new List<GameObject>();
     public GameObject stove_ingredient;
-    public bool onproc = false;
+    public bool onproc, useable = false;
     public int maxingredientout = 2;
-    public string color = "green";
-    bool reset = false;
+    public string color = "based";
+    bool reset= false;
     Animator anim;
     private void Start()
     {
@@ -75,15 +75,45 @@ public class SpriteHandler : MonoBehaviour
         {
             current_waiting_time += Time.deltaTime;
             waiting_time.GetComponent<Image>().fillAmount -= (1 / waitingtimeinsecond) * Time.deltaTime;
-            if(current_waiting_time >= waitingtimeinsecond/2 && color.Equals("green"))
+            if (((Utensil)dataSprite).utensil_type.Equals(UtensilType.Coffee_maker))
             {
-                color = "yellow";
-                StartCoroutine(halfAngry());
-            }else if(current_waiting_time >= waitingtimeinsecond * 0.75f && color.Equals("yellow"))
-            {
-                color = "red";
-                StartCoroutine(fullAngry());
+                waiting_time.SetActive(true);
+                if(current_waiting_time >= waitingtimeinsecond)
+                {
+                    useable = true;
+                    start_waiting_time = false;
+                    current_waiting_time = 0;
+                    waiting_time.GetComponent<Image>().fillAmount = 1;
+                    waiting_time.SetActive(false);
+                }
+                return;
             }
+            if (!pauseUpdateSprite)
+            {
+                if (color.Equals("based"))
+                {
+                    color = "green";
+                    StartCoroutine(sitWithOrderUp());
+                }
+                if (current_waiting_time >= waitingtimeinsecond / 2 && color.Equals("green"))
+                {
+                    StopCoroutine(sitWithOrderUp());
+                    color = "yellow";
+                    StartCoroutine(halfAngry());
+                }
+                if (current_waiting_time >= waitingtimeinsecond * 0.75f && color.Equals("yellow"))
+                {
+                    StopCoroutine(halfAngry());
+                    color = "red";
+                    StartCoroutine(fullAngry());
+                }
+            }
+            else if(pauseUpdateSprite && !runningTimerCorut)
+            {
+                runningTimerCorut = true;
+                StartCoroutine(resetTimer());
+            }
+            
             if(food_order.Count <= 0)
             {
                 if (current_waiting_time >= waitingtimeinsecond)
@@ -203,6 +233,7 @@ public class SpriteHandler : MonoBehaviour
                         GameObject food_instantiate = Instantiate(gamemanager.sprite_food_and_ingredient, spawnhere, true);
                         food_instantiate.GetComponent<FoodHandling>().food_data = ingredient_cook;
                         food_instantiate.transform.localScale = new Vector3(1.3f, 1f, 1f);
+                        food_instantiate.GetComponent<BoxCollider2D>().size = new Vector2(1.3f, 1f);
                         food_instantiate.transform.localPosition = new Vector3(0, spawnhere.localPosition.y, 0);
                         gamemanager.chunk_food.Add(food_instantiate);
                         break;
@@ -391,6 +422,7 @@ public class SpriteHandler : MonoBehaviour
                             gamemanager.todayEarning += total_this_sprite;
                             salary_get.GetComponent<Text>().text = "$ " + total_this_sprite.ToString();
                             salary_get.SetActive(true);
+                            gamemanager.customereat += 1;
                             RefreshCustomer();
                             yield return new WaitForSeconds(0.6f);
                             total_this_sprite = 0;
@@ -459,6 +491,17 @@ public class SpriteHandler : MonoBehaviour
         }
     }
 
+    IEnumerator sitWithOrderUp()
+    {
+        SpriteHandlingCustomer("sit");
+        yield return new WaitForSeconds(1f);
+        if (current_do.Equals("order_time"))
+        {
+            SpriteHandlingCustomer("order_up");
+        }
+        StopCoroutine(sitWithOrderUp());
+    }
+
     IEnumerator halfAngry()
     {
         while (color.Equals("yellow"))
@@ -489,6 +532,18 @@ public class SpriteHandler : MonoBehaviour
             yield return null;
         }
         StopCoroutine(fullAngry());
+    }
+
+
+    IEnumerator resetTimer()
+    {
+        if (pauseUpdateSprite)
+        {
+            yield return new WaitForSeconds(2f);
+            pauseUpdateSprite = false;
+        }
+        runningTimerCorut = false;
+        StopAllCoroutines();
     }
 
 }

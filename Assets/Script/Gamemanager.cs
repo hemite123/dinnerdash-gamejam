@@ -100,7 +100,9 @@ public class Gamemanager : MonoBehaviour
     public Light2D daynight;
     public GameObject lightCollection;
     public List<Item> itemOwned = new List<Item>();
-    public GameObject content_item;
+    public GameObject content_item,coffee_machine;
+    public FoodMenu coffee_data;
+    public bool waitingtime;
 
     private void Awake()
     {
@@ -133,30 +135,34 @@ public class Gamemanager : MonoBehaviour
             if (obj.GetType().Equals(typeof(Utensil)))
             {
                 Utensil uten = obj as Utensil;
-                GameObject clone = Instantiate(button_utensil,content_utensi.transform,true);
+                GameObject clone = Instantiate(button_utensil, content_utensi.transform, true);
                 clone.GetComponent<Button>().onClick.AddListener(delegate { button_hand.ActionButton(obj); });
-                foreach(Transform go in clone.transform)
+                foreach (Transform go in clone.transform)
                 {
-                    if(go.GetComponent<Image>())
+                    if (go.GetComponent<Image>())
                     {
                         go.GetComponent<Image>().sprite = uten.utensil_img;
-                    }else if(go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("price"))
+                    } else if (go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("price"))
                     {
                         go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.utensil_price.ToString();
-                    }else if(go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("UtensilName"))
+                    } else if (go.GetComponent<TMPro.TextMeshProUGUI>() && go.name.Equals("UtensilName"))
                     {
                         go.GetComponent<TMPro.TextMeshProUGUI>().text = uten.utensil_name;
                     }
                 }
                 clone.transform.localScale = new Vector3(1, 1, 1);
-            }else if (obj.GetType().Equals(typeof(Customer)))
+            } else if (obj.GetType().Equals(typeof(Customer)))
             {
                 customer_data.Add((Customer)Instantiate(obj));
-               
+
             }
             else if (obj.GetType().Equals(typeof(FoodMenu)))
             {
                 FoodMenu uten = obj as FoodMenu;
+                if (!uten.isCraftable)
+                {
+                    continue;
+                }
                 GameObject clone = Instantiate(food_button, content_food.transform, true);
                 clone.GetComponent<Button>().onClick.AddListener(delegate { button_hand.SelectFood(uten,clone); });
                 foreach (Transform go in clone.transform)
@@ -245,9 +251,14 @@ public class Gamemanager : MonoBehaviour
             {
                 image_buy.SetActive(false);
             }
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && (!EventSystem.current.IsPointerOverGameObject() || !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId) ))
             {
                 RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+                if (refrigenerator != null)
+                {
+                    uiRefrigenerator.SetActive(false);
+                    refrigenerator = null;
+                }
                 if (hit.collider != null && hit.transform.tag.Equals("Utensil"))
                 {
                     SpriteHandler sprithandl = hit.transform.GetComponent<SpriteHandler>();
@@ -262,6 +273,21 @@ public class Gamemanager : MonoBehaviour
                         refrigenerator = hit.transform.gameObject;
                         quedialog.DisplayingTutorial("openFridge");
                         uiRefrigenerator.SetActive(true);
+                        return;
+                    }
+                    if (uten.utensil_type.Equals(UtensilType.Coffee_maker) && sprithandl.useable && DragAndDrop_Instance.draggedObject == null)
+                    {
+                        //clone the coffe and settel to dragable
+                        quedialog.DisplayingTutorial("CoffeeTutorial");
+                        coffee_machine = hit.transform.gameObject;
+                        GameObject insntate = Instantiate(sprite_food_and_ingredient, hit.transform, false);
+                        insntate.transform.localScale = new Vector3(1,1,1);
+                        insntate.GetComponent<BoxCollider2D>().size = new Vector2(2,2);
+                        insntate.transform.position = hit.transform.transform.position;
+                        FoodHandling data = insntate.GetComponent<FoodHandling>();
+                        data.food_data = coffee_data;
+                        chunk_food.Add(insntate);
+                        DragAndDrop_Instance.draggedObject = insntate.transform;
                         return;
                     }
                     if (!getcur.Equals(""))
@@ -300,6 +326,7 @@ public class Gamemanager : MonoBehaviour
                             GameObject food_instantiate = Instantiate(sprite_food_and_ingredient, spawnhere, true);
                             food_instantiate.GetComponent<FoodHandling>().food_data = sprithandl.finalProduct;
                             food_instantiate.transform.localScale = new Vector3(1.3f, 1f, 1f);
+                            food_instantiate.GetComponent<BoxCollider2D>().size = new Vector2(1.3f, 1f);
                             food_instantiate.transform.localPosition = new Vector3(0, spawnhere.localPosition.y, 0);
                             sprithandl.finalProduct = null;
                             sprithandl.onproc = false;
@@ -312,14 +339,7 @@ public class Gamemanager : MonoBehaviour
                         //instantiate the food to place 
                     }
                 }
-                else
-                {
-                    if (refrigenerator != null && !event_system.IsPointerOverGameObject())
-                    {
-                        uiRefrigenerator.SetActive(false);
-                        refrigenerator = null;
-                    }
-                }
+               
             }
            
             if(food_list_ui.transform.childCount <= foodSelect.Count && !addImage)
@@ -368,10 +388,11 @@ public class Gamemanager : MonoBehaviour
             }
            
 
-            if (currentCustomer < maxCustomer && timertowait <= 0f && !closingtime)
+            if (currentCustomer < maxCustomer && timertowait <= 0f && !closingtime && !waitingtime)
             {
                 float[] chance = new float[2] { customerodds, 100.0f - customerodds};
                 float random = UnityEngine.Random.Range(0f, 100f);
+                Debug.Log(random);
                 float top = 0;
                 for(int i = 0; i < chance.Length; i++)
                 {
@@ -386,6 +407,8 @@ public class Gamemanager : MonoBehaviour
                         //spawning 
                     }
                 }
+                StartCoroutine(ResetRandom());
+                waitingtime = true;
             }
 
         }
@@ -606,5 +629,11 @@ public class Gamemanager : MonoBehaviour
             }
             lightCollection.SetActive(true);
         }
+    }
+
+    IEnumerator ResetRandom()
+    {
+        yield return new WaitForSeconds(2f);
+        waitingtime = false;
     }
 }

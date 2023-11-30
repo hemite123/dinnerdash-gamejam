@@ -11,5 +11,7 @@ public class FoodMenu : ScriptableObject
     public int foodPrice;
     public int foodGachaOdds;
     public List<Ingredient> ingredient_food = new List<Ingredient>();
+    public float timerReduce;
+    public bool isCraftable;
 
 }

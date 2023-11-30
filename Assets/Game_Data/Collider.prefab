@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 8985251150668274183}
   - component: {fileID: 4292159944381563234}
   - component: {fileID: 7523851642286057628}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Collider
   m_TagString: CustomerWaiting
   m_Icon: {fileID: 0}
@@ -58,10 +58,10 @@ BoxCollider2D:
     m_Bits: 4294967295
   m_ContactCaptureLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4096
   m_CallbackLayers:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 4096
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0

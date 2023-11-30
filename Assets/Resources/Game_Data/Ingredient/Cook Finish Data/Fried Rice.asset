@@ -19,3 +19,5 @@ MonoBehaviour:
   ingredient_food:
   - {fileID: 11400000, guid: 4eeecf4abb04b704ba57e1720cf4e748, type: 2}
   - {fileID: 11400000, guid: 05170df0cc68a2d43a33f53867b943f1, type: 2}
+  timerReduce: 0
+  isCraftable: 1

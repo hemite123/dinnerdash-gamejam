@@ -8,10 +8,12 @@ public class CustomerHandler : MonoBehaviour
     public int customer_list = 0;
     public float totalCustomerWaitAngry;
     public float currentCustomerWaitAngry;
-    public string color = "green";
+    public string color = "based";
+    public bool pauseUpdateSprite;
     bool allset = false;
     public List<SpriteRenderer> sr = new List<SpriteRenderer>();
     Gamemanager gamemanager;
+    bool runningTimerCorut;
 
     private void Start()
     {
@@ -24,28 +26,49 @@ public class CustomerHandler : MonoBehaviour
         if(totalCustomerWaitAngry >= 0 && allset)
         {
             currentCustomerWaitAngry -= Time.deltaTime;
-            if(currentCustomerWaitAngry <= totalCustomerWaitAngry / 2 && color == "green")
+            if (!pauseUpdateSprite)
             {
-                color = "yellow";
-                int index = 0;
-                foreach (Customer customer in customer_data)
+                if (color == "based")
                 {
-                    sr[index].sprite = customer.customer_img.Find(x => x.action == "halfangidle").img_sprite;
-                    index++;
+                    color = "green";
+                    int index = 0;
+                    foreach (Customer customer in customer_data)
+                    {
+                        sr[index].sprite = customer.customer_img.Find(x => x.action == "idle").img_sprite;
+                        index++;
+                    }
+
                 }
-                
+                if (currentCustomerWaitAngry <= totalCustomerWaitAngry / 2 && color == "green")
+                {
+                    color = "yellow";
+                    int index = 0;
+                    foreach (Customer customer in customer_data)
+                    {
+                        sr[index].sprite = customer.customer_img.Find(x => x.action == "halfangidle").img_sprite;
+                        index++;
+                    }
+
+                }
+                if (currentCustomerWaitAngry <= totalCustomerWaitAngry / 4 && color == "yellow")
+                {
+                    color = "red";
+                    int index = 0;
+                    foreach (Customer customer in customer_data)
+                    {
+                        sr[index].sprite = customer.customer_img.Find(x => x.action == "angidle").img_sprite;
+                        index++;
+                    }
+
+                }
             }
-            else if (currentCustomerWaitAngry <= totalCustomerWaitAngry / 4 && color == "yellow")
+            else if(pauseUpdateSprite && !runningTimerCorut)
             {
-                color = "red";
-                int index = 0;
-                foreach (Customer customer in customer_data)
-                {
-                    sr[index].sprite = customer.customer_img.Find(x => x.action == "angidle").img_sprite;
-                    index++;
-                }
-                
+                runningTimerCorut = true;
+                StartCoroutine(resetTimer());
             }
+           
+            
             if (currentCustomerWaitAngry <= 0)
             {
                 gamemanager.angrycustomer += 1;
@@ -115,6 +138,26 @@ public class CustomerHandler : MonoBehaviour
         currentCustomerWaitAngry = totalCustomerWaitAngry;
         allset = true;
         gamemanager.reindexing = true;
+    }
+
+    public void ChangeActionSprite(string action)
+    {
+        int index = 0;
+        foreach (Customer customer in customer_data)
+        {
+            sr[index].sprite = customer.customer_img.Find(x => x.action == action).img_sprite;
+            index++;
+        }
+    }
+
+    IEnumerator resetTimer()
+    {
+        if (pauseUpdateSprite)
+        {
+            yield return new WaitForSeconds(2f);
+            pauseUpdateSprite = false;
+        }
+        runningTimerCorut = false;
     }
 
 }
