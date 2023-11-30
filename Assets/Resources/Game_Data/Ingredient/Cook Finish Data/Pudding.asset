@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04c0a19cf6e0afd41905bb4ae488b841, type: 3}
+  m_Name: Pudding
+  m_EditorClassIdentifier: 
+  food_name: Pudding
+  food_img: {fileID: 21300000, guid: 82e5af5c736598541a8bd6d16fe2378e, type: 3}
+  foodPrice: 2500
+  foodGachaOdds: 0
+  ingredient_food:
+  - {fileID: 11400000, guid: 4cf0b23ce4a1ed74bb6e19c3705677b5, type: 2}
+  - {fileID: 11400000, guid: 42d0e6ca60547aa4db548322b90c1bda, type: 2}
+  - {fileID: 11400000, guid: bddf6a324f27c284a8021ba3809ff75d, type: 2}
+  - {fileID: 11400000, guid: f8f09d7e0d07673428321e03be881da4, type: 2}
+  - {fileID: 11400000, guid: 571a83f382f72b844921570738ff9771, type: 2}
+  timerReduce: 0
+  isCraftable: 1

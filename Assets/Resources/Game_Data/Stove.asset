@@ -13,12 +13,12 @@ MonoBehaviour:
   m_Name: Stove
   m_EditorClassIdentifier: 
   utensil_name: Stove
-  utensil_img: {fileID: -1965222710, guid: e7fecdd74c449d3478d84f276c29ad80, type: 3}
+  utensil_img: {fileID: 21300000, guid: bd7bd54e21311f84e8e81841899cfc62, type: 3}
   utensil_price: 500
   utensil_mutliple: 0
   utensil_type: 0
   utensil_max_use: 0
-  utensil_placing: {fileID: 11400000, guid: eb213d06843b8b847ab61fb1f52f277c, type: 2}
+  utensil_placing: {fileID: 0}
   isGround: 0
   cookStep: []
   utensil_gameobject: {fileID: 2229348977170231069, guid: c54243c1d00e1f948adf21f546b2c69c, type: 3}

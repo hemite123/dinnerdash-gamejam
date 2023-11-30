@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: 4 Customer Desk 1
   m_EditorClassIdentifier: 
   utensil_name: 4 Customer Desk
-  utensil_img: {fileID: 0}
+  utensil_img: {fileID: -711943870, guid: bc85fef44c0b7fb4cb4cb4211d0f30c7, type: 3}
   utensil_price: 1500
   utensil_mutliple: 1
   utensil_type: 3

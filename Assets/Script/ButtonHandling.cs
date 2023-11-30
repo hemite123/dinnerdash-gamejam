@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Cinemachine;
-
+using System.Text;
 public class ButtonHandling : MonoBehaviour
 {
     Gamemanager gamemanager;
@@ -14,6 +14,11 @@ public class ButtonHandling : MonoBehaviour
     int MaxDesk = 0;
     int openImage = 1;
     bool buttonselectRecipe;
+    public GameObject food_scroll_View;
+    public GameObject utensil_scroll_view,item_scroll_view;
+    public Sprite equipe_sprite;
+    public Sprite own_sprite;
+    public Sprite unonw_sprite;
 
     private void Awake()
     {
@@ -58,7 +63,7 @@ public class ButtonHandling : MonoBehaviour
             Utensil utensil = (Utensil)Data;
             if(gamemanager.currency < utensil.utensil_price)
             {
-                StartCoroutine(gamemanager.notifDisplay("Not Enough Money"));
+                StartCoroutine(gamemanager.notifDisplay("Not Enough Money","error"));
                 return;
             }
             float additionalscale = gamemanager.additionscale;
@@ -67,21 +72,23 @@ public class ButtonHandling : MonoBehaviour
                 MaxDesk = utensil.utensil_max_use;
             }
             gamemanager.buyingobject = true;
+            gamemanager.quedialog.DisplayingTutorial("modificationUtensil");
             GameObject gameObject = Instantiate(utensil.utensil_gameobject, new Vector3(0, 0, 0), Quaternion.identity);
             gameObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
             gamemanager.draggingbuying = gameObject;
             GameObject go_verification = Instantiate(gamemanager.verification);
-            gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+            gameObject.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 130);
             foreach (Transform childObj in gameObject.transform)
             {
                 if (childObj.tag.Equals("Chair"))
                 {
-                    childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 60);
+                    childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 130);
                 }
             }
             go_verification.transform.localPosition = gameObject.transform.localPosition + new Vector3(0, 0, 0);
             go_verification.transform.GetChild(0).GetChild(0).GetComponent<Button>().onClick.AddListener(delegate { AcceptBuy(gameObject,utensil); });
             go_verification.transform.GetChild(0).GetChild(1).GetComponent<Button>().onClick.AddListener(delegate { DeclineBuy(gameObject); });
+            go_verification.GetComponent<SpriteRenderer>().sortingOrder = 3;
             gamemanager.spawnVerification = go_verification;
             gamemanager.charge = utensil.utensil_price;
             gamemanager.rotate_image.SetActive(true);
@@ -110,7 +117,7 @@ public class ButtonHandling : MonoBehaviour
         Collider2D collider = object_to_buy.GetComponent<Collider2D>();
         if (collider.IsTouchingLayers())
         {
-            StartCoroutine(gamemanager.notifDisplay("Cant Place Here"));
+            StartCoroutine(gamemanager.notifDisplay("Cant Place Here","error"));
             return;
         }
         gamemanager.buyingobject = false;
@@ -174,6 +181,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.currency -= gamemanager.charge;
         gamemanager.charge = 0;
         gamemanager.rotate_image.SetActive(false);
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
     public void DeclineBuy(GameObject object_to_buy)
@@ -185,6 +193,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.charge = 0;
         DestroyImmediate(gamemanager.spawnVerification);
         DestroyImmediate(object_to_buy);
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
     public void AcceptChange(GameObject object_to_buy)
@@ -192,7 +201,7 @@ public class ButtonHandling : MonoBehaviour
         Collider2D collider = object_to_buy.GetComponent<Collider2D>();
         if (collider.IsTouchingLayers())
         {
-            StartCoroutine(gamemanager.notifDisplay("Cant Place Here"));
+            StartCoroutine(gamemanager.notifDisplay("Cant Place Here","error"));
             return;
         }
         gamemanager.changePlace = false;
@@ -210,16 +219,19 @@ public class ButtonHandling : MonoBehaviour
                 childObj.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255);
             }
         }
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
-    public void DeleteChange(GameObject object_to_buy)
+    public void DeleteChange(GameObject object_to_buy,int currenct)
     {
+        gamemanager.currency += currenct;
         gamemanager.changePlace = false;
         gamemanager.draggingbuying = null;
         gamemanager.addUtensil = false;
         DestroyImmediate(GameObject.FindGameObjectWithTag("Notif"));
         DestroyImmediate(object_to_buy);
         gamemanager.rotate_image.SetActive(false);
+        gamemanager.DragAndDrop_Instance.delayclick = true;
     }
 
     public void ExpandUi()
@@ -254,7 +266,7 @@ public class ButtonHandling : MonoBehaviour
         }
         else
         {
-            StartCoroutine(gamemanager.notifDisplay("Not Enough Money"));
+            StartCoroutine(gamemanager.notifDisplay("Not Enough Money","error"));
             //Error buying
         }
     }
@@ -273,9 +285,79 @@ public class ButtonHandling : MonoBehaviour
     {
         if (!gamemanager.isTutorial)
         {
+            if(gamemanager.foodSelect.Count <= 0)
+            {
+                StartCoroutine(gamemanager.notifDisplay("Select The Food You Want To Serve","error"));
+                return;
+            }
+            List<UtensilType> requiredUtensil = new List<UtensilType>() { UtensilType.Desk,UtensilType.Stove,UtensilType.Service_Desk,UtensilType.Fridge,UtensilType.Trash };
+            //check utensil on map
+            SpriteHandler[] listUtensil = GameObject.FindObjectsOfType<SpriteHandler>();
+            if (listUtensil.Length > 0)
+            {
+                foreach (SpriteHandler shandle in listUtensil)
+                {
+                    if (shandle.dataSprite.GetType().Equals(typeof(Utensil)))
+                    {
+                        Utensil uten = (Utensil)shandle.dataSprite;
+                        if (requiredUtensil.Contains(uten.utensil_type))
+                        {
+                            requiredUtensil.Remove(uten.utensil_type);
+                        }
+
+                    }
+                }
+                if(requiredUtensil.Count > 0)
+                {
+                    StringBuilder message = new StringBuilder("Place ");
+                    int index = 0;
+                    foreach (UtensilType typeutensil in requiredUtensil)
+                    {
+                        if (typeutensil.Equals(UtensilType.Desk))
+                        {
+                            message.Append("Customer Desk");
+                        } else if (typeutensil.Equals(UtensilType.Fridge))
+                        {
+                            message.Append("Refrigenerator");
+                        }
+                        else if (typeutensil.Equals(UtensilType.Service_Desk))
+                        {
+                            message.Append("Service Desk");
+                        }
+                        else if (typeutensil.Equals(UtensilType.Trash))
+                        {
+                            message.Append("Trash Can");
+                        }
+                        else if (typeutensil.Equals(UtensilType.Stove))
+                        {
+                            message.Append("Stove");
+                        }
+                        //check if add index or ,
+                        if (index < requiredUtensil.Count)
+                        {
+                            message.Append(",");
+                        }
+                        index++;
+                    }
+                    StartCoroutine(gamemanager.notifDisplay(message.ToString(), "error"));
+                    return;
+                }
+            }
+            else
+            {
+                StartCoroutine(gamemanager.notifDisplay("Place Service Desk,Stove,Customer Desk,Trash Can,Refrigenerator", "error"));
+                return;
+            }
             if (gamemanager.firstrunning)
             {
                 gamemanager.firstrunning = false;
+            }
+            else
+            {
+                AudioHandling adhand = AudioHandling.instance;
+                adhand.forcechange = true;
+                adhand.audio.clip = gamemanager.clipDays;
+                StartCoroutine(gamemanager.changeDayToNight("days"));
             }
             gamemanager.gameStarting = true;
             gamemanager.customerodds = gamemanager.normalodds;
@@ -303,7 +385,7 @@ public class ButtonHandling : MonoBehaviour
         }
         else
         {
-            StartCoroutine(gamemanager.notifDisplay("You'r In Tutorial"));
+            StartCoroutine(gamemanager.notifDisplay("You'r In Tutorial","error"));
         }
         
     }
@@ -323,7 +405,8 @@ public class ButtonHandling : MonoBehaviour
         if(selectedSpawn != null)
         {
             GameObject insntate = Instantiate(gamemanager.sprite_food_and_ingredient, selectedSpawn, false);
-            insntate.transform.localScale = new Vector3(2, 2, 2);
+            insntate.transform.localScale = new Vector3(4, 4, 6);
+            insntate.GetComponent<BoxCollider2D>().size = new Vector2(1,1);
             insntate.transform.position = selectedSpawn.transform.position;
             handle.refriitem.Add(insntate);
             FoodHandling data = insntate.GetComponent<FoodHandling>();
@@ -432,5 +515,118 @@ public class ButtonHandling : MonoBehaviour
     {
         gamemanager.uiRefrigenerator.SetActive(false);
         gamemanager.refrigenerator = null;
+    }
+
+    public void ChangeMenu(string datastring)
+    {
+        if (datastring.Equals("Food"))
+        {
+            utensil_scroll_view.SetActive(false);
+            food_scroll_View.gameObject.SetActive(true);
+            item_scroll_view.SetActive(false);
+            QueueDialog.instance.DisplayingTutorial("FoodSelect");
+        }
+        else if (datastring.Equals("Utensil"))
+        {
+            utensil_scroll_view.gameObject.SetActive(true);
+            food_scroll_View.SetActive(false);
+            item_scroll_view.SetActive(false);
+
+        }
+        else if (datastring.Equals("Item"))
+        {
+            utensil_scroll_view.gameObject.SetActive(false);
+            food_scroll_View.SetActive(false);
+            item_scroll_view.SetActive(true);
+            QueueDialog.instance.DisplayingTutorial("ItemSelect");
+
+        }
+    }
+
+    public void SelectFood(FoodMenu foodMenu,GameObject button_food)
+    {
+        if(gamemanager.foodSelect.Count >= 3)
+        {
+            StartCoroutine(gamemanager.notifDisplay("Maxed Food Select","error"));
+            return;
+        }
+        //check if owned or not
+        if (!gamemanager.ownedFood.Contains(foodMenu))
+        {
+            if(gamemanager.currency >= foodMenu.foodPrice)
+            {
+                StartCoroutine(gamemanager.notifDisplay("Transaction Success","noterror"));
+                button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = own_sprite;
+                gamemanager.ownedFood.Add(foodMenu);
+                gamemanager.currency -= foodMenu.foodPrice;
+            }
+            else
+            {
+                StartCoroutine(gamemanager.notifDisplay("Not Enough Money", "error"));
+            }
+            //displaying the ui buy
+            return;
+        }
+        if (gamemanager.foodSelect.Contains(foodMenu)) 
+        {
+            StartCoroutine(gamemanager.notifDisplay("Unselect Food", "noterror"));
+            button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = own_sprite;
+            gamemanager.foodSelect.Remove(foodMenu);  
+        }
+        else
+        {
+            StartCoroutine(gamemanager.notifDisplay("Food Selected", "noterror"));
+            button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = equipe_sprite;
+            gamemanager.foodSelect.Add(foodMenu);
+        }
+    }
+
+    public void SkipTutorial()
+    {
+        gamemanager.isTutorial = false;
+        QueueDialog.instance.skipActionTutoral = true;
+        QueueDialog.instance.imagetutorial.transform.parent.parent.gameObject.SetActive(false);
+        gamemanager.currency += 5000;
+    }
+
+    public void BuyItem(Item item,GameObject button_food)
+    {
+        if (gamemanager.itemOwned.Contains(item))
+        {
+            StartCoroutine(gamemanager.notifDisplay("Item Already Bought", "error"));
+            return;
+        }
+        if(gamemanager.currency >= item.price_item)
+        {
+            StartCoroutine(gamemanager.notifDisplay("Transaction Success", "noterror"));
+            button_food.transform.Find("ImgChecked").GetComponent<Image>().sprite = equipe_sprite;
+            gamemanager.itemOwned.Add(item);
+            if (item.increase_chance_spawn > 0)
+            {
+                gamemanager.normalodds += item.increase_chance_spawn;
+            } 
+            if(item.increase_chance_customer > 0)
+            {
+                foreach(Customer custom in gamemanager.customer_data)
+                {
+                    custom.CustomerSpawnRarity += item.increase_chance_customer;
+                }
+                gamemanager.customer_data.Sort();
+            }
+        }
+        else
+        {
+            StartCoroutine(gamemanager.notifDisplay("Not Enough Money", "error"));
+        }
+        
+    }
+
+    public void CloseActionTutorial(TutorialActionDo tad)
+    {
+        if (tad.isNeedPause)
+        {
+            Time.timeScale = 1;
+        }
+        tad.displaying.SetActive(false);
     }
 }

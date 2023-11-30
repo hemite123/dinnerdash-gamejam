@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 using UnityEngine.UI;
 
 //Fix the scaling
@@ -33,15 +34,17 @@ public class SpriteHandler : MonoBehaviour
     public ScriptableObject finalProduct;
     public int cookStep = 0;
     public Image image_food;
-    public bool setImage;
+    public bool setImage,pauseUpdateSprite, runningTimerCorut;
     Vector3 lastlocalscale;
     public float lastscale;
     public List<GameObject> refriitem = new List<GameObject>();
     List<GameObject> imageOrder = new List<GameObject>();
     public GameObject stove_ingredient;
-    public bool onproc = false;
+    public bool onproc, useable = false;
     public int maxingredientout = 2;
-    bool reset = false;
+    public string color = "based";
+    bool reset= false;
+    Animator anim;
     private void Start()
     {
         lastlocalscale = transform.localScale;
@@ -72,6 +75,45 @@ public class SpriteHandler : MonoBehaviour
         {
             current_waiting_time += Time.deltaTime;
             waiting_time.GetComponent<Image>().fillAmount -= (1 / waitingtimeinsecond) * Time.deltaTime;
+            if (((Utensil)dataSprite).utensil_type.Equals(UtensilType.Coffee_maker))
+            {
+                waiting_time.SetActive(true);
+                if(current_waiting_time >= waitingtimeinsecond)
+                {
+                    useable = true;
+                    start_waiting_time = false;
+                    current_waiting_time = 0;
+                    waiting_time.GetComponent<Image>().fillAmount = 1;
+                    waiting_time.SetActive(false);
+                }
+                return;
+            }
+            if (!pauseUpdateSprite)
+            {
+                if (color.Equals("based"))
+                {
+                    color = "green";
+                    StartCoroutine(sitWithOrderUp());
+                }
+                if (current_waiting_time >= waitingtimeinsecond / 2 && color.Equals("green"))
+                {
+                    StopCoroutine(sitWithOrderUp());
+                    color = "yellow";
+                    StartCoroutine(halfAngry());
+                }
+                if (current_waiting_time >= waitingtimeinsecond * 0.75f && color.Equals("yellow"))
+                {
+                    StopCoroutine(halfAngry());
+                    color = "red";
+                    StartCoroutine(fullAngry());
+                }
+            }
+            else if(pauseUpdateSprite && !runningTimerCorut)
+            {
+                runningTimerCorut = true;
+                StartCoroutine(resetTimer());
+            }
+            
             if(food_order.Count <= 0)
             {
                 if (current_waiting_time >= waitingtimeinsecond)
@@ -190,8 +232,9 @@ public class SpriteHandler : MonoBehaviour
                         storeIngredient = new List<ScriptableObject>();
                         GameObject food_instantiate = Instantiate(gamemanager.sprite_food_and_ingredient, spawnhere, true);
                         food_instantiate.GetComponent<FoodHandling>().food_data = ingredient_cook;
-                        food_instantiate.transform.localScale = new Vector3(1.3f, 4f, 1f);
-                        food_instantiate.transform.localPosition = new Vector3(0, spawnhere.position.y + 0.25f, 0);
+                        food_instantiate.transform.localScale = new Vector3(1.3f, 1f, 1f);
+                        food_instantiate.GetComponent<BoxCollider2D>().size = new Vector2(1.3f, 1f);
+                        food_instantiate.transform.localPosition = new Vector3(0, spawnhere.localPosition.y, 0);
                         gamemanager.chunk_food.Add(food_instantiate);
                         break;
                     }
@@ -240,7 +283,7 @@ public class SpriteHandler : MonoBehaviour
                     if (!dataChair.Value)
                     {
                         Transform transform = dataChair.Key;
-                        transform.GetComponent<SpriteRenderer>().sprite = cust.customer_img;
+                        transform.GetComponent<SpriteRenderer>().sprite = cust.customer_img.Find(x => x.action =="sit").img_sprite;
                         chairData[dataChair.Key] = true;
                         if (ishaveexclusive)
                         {
@@ -319,14 +362,16 @@ public class SpriteHandler : MonoBehaviour
                         string temp_current_do = action.Key;
                         if (temp_current_do.Equals("order_time"))
                         {
-                            yield return new WaitForSeconds(0.2f);
-                            popup.SetActive(true);
+                            yield return new WaitForSeconds(1f);
+                            //popup.SetActive(true);
+                            SpriteHandlingCustomer("order_up");
                             current_do = action.Key;
                             start_waiting_time = true;
                             break;
                         }
                         else if (temp_current_do.Equals("order_wait"))
                         {
+                            SpriteHandlingCustomer("sit");
                             popup.SetActive(false);
                             if (!waiting_time.active)
                             {
@@ -348,7 +393,15 @@ public class SpriteHandler : MonoBehaviour
                         }
                         else if (temp_current_do.Equals("order_eat"))
                         {
+                            SpriteHandlingCustomer("eating");
                             yield return new WaitForSeconds(5f);
+                            List<KeyValuePair<Transform, bool>> loopChair = new List<KeyValuePair<Transform, bool>>(chairData);
+                            foreach (KeyValuePair<Transform, bool> dataChair in loopChair)
+                            {
+                                dataChair.Key.GetComponent<Animator>().runtimeAnimatorController = null;
+                                dataChair.Key.GetComponent<SpriteRenderer>().sprite = defaultSprite;
+                                chairData[dataChair.Key] = false;
+                            }
                             popup.SetActive(true);
                             foreach (GameObject imgord in imageOrder)
                             {
@@ -364,35 +417,16 @@ public class SpriteHandler : MonoBehaviour
                             //calculate the customer give
                             foreach (Customer customer in customer_data)
                             {
-                                total_this_sprite += Random.Range(customer.minSalary, customer.maxSalary);
+                                total_this_sprite += UnityEngine.Random.Range(customer.minSalary, customer.maxSalary);
                             }
                             gamemanager.todayEarning += total_this_sprite;
-                            //display text curreny
-                            customer_sit = 0;
-                            List<string> listkeycustomerinteraction = new List<string>(customerInteraction.Keys);
-                            foreach (string customerinteractionkey in listkeycustomerinteraction)
-                            {
-                                customerInteraction[customerinteractionkey] = false;
-                            }
-                            List<KeyValuePair<Transform, bool>> loopChair = new List<KeyValuePair<Transform, bool>>(chairData);
-                            foreach (KeyValuePair<Transform, bool> dataChair in loopChair)
-                            {
-                                Transform transform = dataChair.Key;
-                                transform.GetComponent<SpriteRenderer>().sprite = defaultSprite;
-                                chairData[dataChair.Key] = false;
-                            }
-                            current_do = "";
-                            processTime = false;
-                            chairSetup = false;
-                            gamemanager.customereat += 1;
-                            waitingtimeinsecond = 0;
-                            food_order = new List<(FoodMenu, bool)>();
                             salary_get.GetComponent<Text>().text = "$ " + total_this_sprite.ToString();
                             salary_get.SetActive(true);
+                            gamemanager.customereat += 1;
+                            RefreshCustomer();
                             yield return new WaitForSeconds(0.6f);
                             total_this_sprite = 0;
-                            salary_get.SetActive(false);
-                            gamemanager.totalcustomerinfield -= 1;
+                            salary_get.SetActive(false); 
                             break;
                             //reset all stats
                         }
@@ -406,6 +440,7 @@ public class SpriteHandler : MonoBehaviour
     public void RefreshCustomer()
     {
         customer_sit = 0;
+        color = "green";
         processTime = false;
         popup.SetActive(false);
         current_waiting_time = 0;
@@ -433,6 +468,82 @@ public class SpriteHandler : MonoBehaviour
         current_do = "";
         gamemanager.totalcustomerinfield -= 1;
         food_order = new List<(FoodMenu, bool)>();
+    }
+
+
+    public void SpriteHandlingCustomer(string action)
+    {
+        List<Transform> keyslist = new List<Transform>(chairData.Keys);
+        int index = 0;
+        foreach (Customer cust in customer_data)
+        {
+            Transform transform = keyslist[index];
+            SpriteHandling getdata = cust.customer_img.Find(x => x.action == action);
+            if (getdata.isAnimation)
+            {
+                transform.GetComponent<Animator>().runtimeAnimatorController = getdata.animation;
+            }
+            else
+            {
+                transform.GetComponent<SpriteRenderer>().sprite = getdata.img_sprite;
+            }
+            index++;
+        }
+    }
+
+    IEnumerator sitWithOrderUp()
+    {
+        SpriteHandlingCustomer("sit");
+        yield return new WaitForSeconds(1f);
+        if (current_do.Equals("order_time"))
+        {
+            SpriteHandlingCustomer("order_up");
+        }
+        StopCoroutine(sitWithOrderUp());
+    }
+
+    IEnumerator halfAngry()
+    {
+        while (color.Equals("yellow"))
+        {
+            SpriteHandlingCustomer("angsithalf");
+            yield return new WaitForSeconds(1f);
+            if (current_do.Equals("order_time"))
+            {
+                SpriteHandlingCustomer("order_up");
+            }
+            yield return new WaitForSeconds(5f);
+            yield return null;
+        }
+        StopCoroutine(halfAngry());
+    }
+
+    IEnumerator fullAngry()
+    {
+        while (color.Equals("red"))
+        {
+            SpriteHandlingCustomer("angsit");
+            yield return new WaitForSeconds(0.5f);
+            if (current_do.Equals("order_time"))
+            {
+                SpriteHandlingCustomer("order_up");
+            }
+            yield return new WaitForSeconds(3f);
+            yield return null;
+        }
+        StopCoroutine(fullAngry());
+    }
+
+
+    IEnumerator resetTimer()
+    {
+        if (pauseUpdateSprite)
+        {
+            yield return new WaitForSeconds(2f);
+            pauseUpdateSprite = false;
+        }
+        runningTimerCorut = false;
+        StopAllCoroutines();
     }
 
 }

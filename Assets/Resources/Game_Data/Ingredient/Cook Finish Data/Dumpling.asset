@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   food_name: Dumpling
   food_img: {fileID: 21300000, guid: 41814e95f27b8b94d80120b0cb415071, type: 3}
-  foodPrice: 0
+  foodPrice: 4500
   foodGachaOdds: 0
   ingredient_food:
   - {fileID: 11400000, guid: 5d8e8d46115fcda40bce6c0f3d434d7f, type: 2}
@@ -22,3 +22,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3b45c517dce3ff4478d9b897a91ab606, type: 2}
   - {fileID: 11400000, guid: 42d0e6ca60547aa4db548322b90c1bda, type: 2}
   - {fileID: 11400000, guid: 4eeecf4abb04b704ba57e1720cf4e748, type: 2}
+  timerReduce: 0
+  isCraftable: 1

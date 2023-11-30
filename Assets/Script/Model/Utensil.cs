@@ -20,5 +20,5 @@ public class Utensil : ScriptableObject
 
 public enum UtensilType
 {
-    Stove,Chopper,Pan,Desk,Chair,Pot,Wok,Fridge,Kitchen_Desk,Trash,Service_Desk
+    Stove,Chopper,Pan,Desk,Chair,Pot,Wok,Fridge,Kitchen_Desk,Trash,Service_Desk,Coffee_maker
 }

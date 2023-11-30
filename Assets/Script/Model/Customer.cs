@@ -8,29 +8,30 @@ using System;
 public class Customer : ScriptableObject,IComparable<Customer>
 {
     public string customer_name;
-    public Sprite customer_img;
+    public List<SpriteHandling> customer_img = new List<SpriteHandling>();
     public CustomerType customerType;
     public int minSalary;
     public int maxSalary;
     public float CustomerSpawnRarity;
     public float CustomerAngryTime;
     public float CustomerAngryWaitingTime;
+    public float ratingJoin;
 
    
 
     public int CompareTo(Customer other)
     {
-        if (this.CustomerSpawnRarity < other.CustomerSpawnRarity)
-        {
-            return 0;
-        }
-        else if (this.CustomerSpawnRarity > other.CustomerSpawnRarity)
+        if (this.CustomerSpawnRarity >= other.CustomerSpawnRarity)
         {
             return 1;
         }
-        else
+        else if (this.CustomerSpawnRarity <= other.CustomerSpawnRarity)
         {
             return -1;
+        }
+        else
+        {
+            return 0;
         }
     }
 }
@@ -38,4 +39,13 @@ public class Customer : ScriptableObject,IComparable<Customer>
 public enum CustomerType
 {
     VIP,NORMAL,BRANDED,CRAZYRICH
+}
+
+[System.Serializable]
+public struct SpriteHandling
+{
+    public string action;
+    public Sprite img_sprite;
+    public bool isAnimation;
+    public RuntimeAnimatorController animation;
 }

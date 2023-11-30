@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9fbe3e2f248ed9d4b8f9662b9f5378fc, type: 3}
+  m_Name: Branded
+  m_EditorClassIdentifier: 
+  customer_name: Branded
+  customer_img:
+  - action: idle
+    img_sprite: {fileID: -838443756, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+    isAnimation: 0
+    animation: {fileID: 0}
+  - action: sit
+    img_sprite: {fileID: -1473202936, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+    isAnimation: 0
+    animation: {fileID: 0}
+  - action: halfangidle
+    img_sprite: {fileID: -444842151, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+    isAnimation: 0
+    animation: {fileID: 0}
+  - action: angidle
+    img_sprite: {fileID: 978363832, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+    isAnimation: 0
+    animation: {fileID: 0}
+  - action: angsithalf
+    img_sprite: {fileID: 601918422, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+    isAnimation: 0
+    animation: {fileID: 0}
+  - action: angsit
+    img_sprite: {fileID: 229703453, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+    isAnimation: 0
+    animation: {fileID: 0}
+  - action: order_up
+    img_sprite: {fileID: 2055146054, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+    isAnimation: 0
+    animation: {fileID: 0}
+  - action: eating
+    img_sprite: {fileID: 0}
+    isAnimation: 1
+    animation: {fileID: 9100000, guid: b56f92d50d4434a49abdf56f5a90b2f6, type: 2}
+  customerType: 2
+  minSalary: 500
+  maxSalary: 1000
+  CustomerSpawnRarity: 2.5
+  CustomerAngryTime: 3.5
+  CustomerAngryWaitingTime: 3
+  ratingJoin: 1

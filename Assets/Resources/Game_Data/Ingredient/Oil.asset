@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Oil
   m_EditorClassIdentifier: 
   ingredient_name: Oil
-  ingredient_img: {fileID: 21300000, guid: 3095f14debe801a43b8c59bdcf588a1a, type: 3}
+  ingredient_img: {fileID: 21300000, guid: 89746823aeaa53c40926e0fec3bde219, type: 3}
   ingredient_cook_time: 0.5
   finish_ingredient_object: {fileID: 11400000}
   isCookingIngredient: 1
