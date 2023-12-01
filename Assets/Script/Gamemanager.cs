@@ -559,16 +559,6 @@ public class Gamemanager : MonoBehaviour
         int CustomerRandom = UnityEngine.Random.Range(1, maxchair+1);
         go.GetComponent<CustomerHandler>().customer_list = CustomerRandom;
         go.transform.localScale = new Vector3(1, 1, 0);
-        for (int j = 0; j < QueuePosition.Count; j++)
-        {
-            if (!QueuePosition[j].Item2)
-            {
-                QueuePosition[j] = (QueuePosition[j].Item1, true);
-                go.transform.position = QueuePosition[j].Item1;
-                break;
-
-            }
-        }
         totalcustomerinfield += 1;
         for (int i = 0; i < QueuePosition.Count; i++)
         {
