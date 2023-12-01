@@ -228,6 +228,19 @@ public class ButtonHandling : MonoBehaviour
     public void DeleteChange(GameObject object_to_buy,int currenct)
     {
         gamemanager.currency += currenct;
+        int currentmaxdeslk = 0;
+        foreach(GameObject uten in GameObject.FindGameObjectsWithTag("Utensil"))
+        {
+            if (uten.GetComponent<SpriteHandler>() && uten != object_to_buy)
+            {
+                SpriteHandler maxdesk = uten.GetComponent<SpriteHandler>();
+                if(currentmaxdeslk <= ((Utensil)maxdesk.dataSprite).utensil_max_use)
+                {
+                    currentmaxdeslk = ((Utensil)maxdesk.dataSprite).utensil_max_use;
+                }
+            }
+        }
+        gamemanager.maxchair = currentmaxdeslk;
         gamemanager.changePlace = false;
         gamemanager.draggingbuying = null;
         gamemanager.addUtensil = false;
@@ -272,7 +285,7 @@ public class ButtonHandling : MonoBehaviour
             gamemanager.maxCustomer += 1;
             gamemanager.calculate = false;
             gamemanager.changedSize = false;
-            gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<Text>().text = firstText;
+            gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<TMPro.TextMeshProUGUI>().text = firstText;
         }
         else
         {
@@ -288,7 +301,7 @@ public class ButtonHandling : MonoBehaviour
             gamemanager.uiExpandPlace.SetActive(false);
         }
         gamemanager.changedSize = false;
-        gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<Text>().text = firstText;
+        gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<TMPro.TextMeshProUGUI>().text = firstText;
     }
 
     public void StartGame()

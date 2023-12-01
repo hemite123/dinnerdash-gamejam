@@ -46,10 +46,21 @@ public class DragAndDrop : MonoBehaviour
     {
         if (!gamemanager.quedialog.imagetutorial.transform.parent.parent.gameObject.active)
         {
-            if (!EventSystem.current.IsPointerOverGameObject() || !EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+            if(Input.touchCount > 0)
             {
-                DragAndDropFunction(GetCustomHandling());
+                if (!EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+                {
+                    DragAndDropFunction(GetCustomHandling());
+                }
             }
+            else
+            {
+                if (!EventSystem.current.IsPointerOverGameObject())
+                {
+                    DragAndDropFunction(GetCustomHandling());
+                }
+            }
+           
           
         }
         if (screenSize != (Vector2)cam.ScreenToWorldPoint(cam.pixelRect.size))
