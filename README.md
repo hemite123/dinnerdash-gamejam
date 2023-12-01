@@ -16,5 +16,5 @@ This Repository Containt :
 
 
 ## Other Repository Game Off
-- [Bug Attack(Game-Off2021)]()
-- [Fishing Day(Game-Off2022)]()
+- [Bug Attack(Game-Off2021)](https://github.com/hemite123/buggame)
+- [Fishing Day(Game-Off2022)](https://github.com/hemite123/fishingday)
