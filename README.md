@@ -1,4 +1,4 @@
-# [Restaurant Rush](https://hemite123.itch.io/restuarant-rush)-Github Game Off 2023
+# [Restaurant Rush](https://hemite123.itch.io/restaurant-rush)-Github Game Off 2023
 
 ## Short Description :
 Simulation Game Manage The Restaurant 
