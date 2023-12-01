@@ -5733,7 +5733,7 @@ MonoBehaviour:
   button_utensil: {fileID: 6321420146431627885, guid: 715591aaed3884248bc62f077bd37a39, type: 3}
   content_utensi: {fileID: 735797350}
   days: 1
-  currency: 500000
+  currency: 0
   buyingobject: 0
   charge: 0
   updatingMap: 1
@@ -5762,7 +5762,7 @@ MonoBehaviour:
   positionsize: 8
   maxchair: 0
   currentCustomer: 0
-  customerodds: 100
+  customerodds: 0
   customerSpawning: {fileID: 2584092299325716696, guid: 02a602beb482077449384e757e6a540c, type: 3}
   draggingbuying: {fileID: 0}
   verificationEdit: {fileID: 5064509019170029867, guid: b0b3298478766b44ebec25c886f4140f, type: 3}
