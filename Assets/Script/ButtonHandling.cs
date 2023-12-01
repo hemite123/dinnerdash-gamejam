@@ -74,6 +74,7 @@ public class ButtonHandling : MonoBehaviour
             gamemanager.buyingobject = true;
             gamemanager.quedialog.DisplayingTutorial("modificationUtensil");
             GameObject gameObject = Instantiate(utensil.utensil_gameobject, new Vector3(0, 0, 0), Quaternion.identity);
+            gameObject.layer = LayerMask.NameToLayer("ChangedObject");
             gameObject.GetComponent<SpriteRenderer>().sortingOrder = 1;
             gamemanager.draggingbuying = gameObject;
             GameObject go_verification = Instantiate(gamemanager.verification);
@@ -123,6 +124,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.buyingobject = false;
         gamemanager.draggingbuying = null;
         gamemanager.updatingMap = true;
+        object_to_buy.layer = LayerMask.NameToLayer("Utensil");
         gamemanager.addUtensil = false;
         QueueDialog que = QueueDialog.instance;
         if(!que.selectedquest.HasValue.Equals(default(Quest))) 
@@ -211,6 +213,7 @@ public class ButtonHandling : MonoBehaviour
         gamemanager.rotate_image.SetActive(false);
         object_to_buy.GetComponent<SpriteRenderer>().sortingOrder = 0;
         DestroyImmediate(GameObject.FindGameObjectWithTag("Notif"));
+        object_to_buy.layer = LayerMask.NameToLayer("Utensil");
         object_to_buy.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 255);
         foreach (Transform childObj in object_to_buy.transform)
         {

@@ -115,7 +115,6 @@ public class Gamemanager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        currency += 1000000;
         StartCoroutine(lightFate());
         event_system = GameObject.FindObjectOfType<EventSystem>(); 
         cam = Camera.main;

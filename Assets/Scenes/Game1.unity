@@ -5654,6 +5654,9 @@ MonoBehaviour:
   mask:
     serializedVersion: 2
     m_Bits: 3616
+  onChanged:
+    serializedVersion: 2
+    m_Bits: 8192
   delayclick: 0
 --- !u!114 &834324190
 MonoBehaviour:
@@ -5840,8 +5843,8 @@ MonoBehaviour:
   - {fileID: 1453124446, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
   - {fileID: -882183608, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
   - {fileID: -838443756, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
-  - {fileID: 81512869, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
-  - {fileID: 978363832, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+  - {fileID: 1827887826, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
+  - {fileID: -444842151, guid: c699222d7ea31544fb64e9384d3109a3, type: 3}
   imageCharaRandom: {fileID: 769321479}
 --- !u!114 &834324192
 MonoBehaviour:
@@ -10182,7 +10185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 0
+  m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

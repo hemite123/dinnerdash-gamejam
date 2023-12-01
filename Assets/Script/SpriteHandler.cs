@@ -543,7 +543,7 @@ public class SpriteHandler : MonoBehaviour
             pauseUpdateSprite = false;
         }
         runningTimerCorut = false;
-        StopAllCoroutines();
+        StopCoroutine(resetTimer());
     }
 
 }

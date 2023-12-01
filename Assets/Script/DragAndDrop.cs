@@ -28,6 +28,7 @@ public class DragAndDrop : MonoBehaviour
     float aditionaly = 0f;
     bool singleexecute = false;
     public LayerMask mask;
+    public LayerMask onChanged;
     public bool delayclick = false;
 
     void Start()
@@ -83,7 +84,7 @@ public class DragAndDrop : MonoBehaviour
                     delayclick = false;
                     return;
                 }
-                RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 0f, mask);
+                RaycastHit2D hit = Physics2D.Raycast(cam.ScreenToWorldPoint(Input.mousePosition), Vector2.zero, 0f, gamemanager.buyingobject || gamemanager.changePlace ? onChanged : mask);
                 if (hit.collider != null)
                 {
                     Debug.Log(hit.transform.name);
@@ -105,6 +106,7 @@ public class DragAndDrop : MonoBehaviour
                         gamemanager.spawnVerification = go_verification;
                         go_verification.transform.localPosition = hit.transform.localPosition + new Vector3(0, 0, 0);
                         gamemanager.draggingbuying = hit.transform.gameObject;
+                        gamemanager.draggingbuying.layer = LayerMask.NameToLayer("ChangedObject");
                         gamemanager.draggingbuying.GetComponent<SpriteRenderer>().sortingOrder = 3;
                         gamemanager.draggingbuying.GetComponent<SpriteRenderer>().color = new Color32(255, 255, 255, 130);
                         foreach (Transform childObj in gamemanager.draggingbuying.transform)

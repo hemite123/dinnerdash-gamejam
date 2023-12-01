@@ -65,7 +65,8 @@ public class AudioHandling : MonoBehaviour
         {
             if (forcechange)
             {
-                StopAllCoroutines();
+                StopCoroutine(FadeIn());
+                StopCoroutine(FadeOut());
                 forcechange = false;
             }
             else
