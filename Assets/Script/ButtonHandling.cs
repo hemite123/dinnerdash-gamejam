@@ -244,9 +244,16 @@ public class ButtonHandling : MonoBehaviour
             gamemanager.uiExpandPlace.SetActive(true);
         }
         gamemanager.changedSize = true;
-        Text textdata = gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<Text>();
+        TMPro.TextMeshProUGUI textdata = gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<TMPro.TextMeshProUGUI>();
+        if (firstText == "")
+        {
+            firstText = textdata.text;
+        }
+        else
+        {
+            textdata.text = firstText;
+        }
         string gettext = textdata.text;
-        firstText = gettext;
         textdata.text = string.Format(gettext, gamemanager.buyingExpandingPrice.ToString());
 
     }

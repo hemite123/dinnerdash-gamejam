@@ -484,24 +484,28 @@ public class DragAndDrop : MonoBehaviour
                                     else if (!foodHandler.isIngredient && data.utensil_type.Equals(UtensilType.Desk))
                                     {
                                         #region Coffee To Desk
-                                        if(food.timerReduce > 0)
+                                        if(food != null)
                                         {
-                                            if(spritehand.customer_data.Count > 0)
+                                            if (food.timerReduce > 0)
                                             {
-                                                objectOutside = false;
-                                                timereduce = food.timerReduce * spritehand.customer_sit;
-                                                spriteHandler = spritehand;
-                                                customehandler = null;
-                                                draggedObject.GetComponent<SpriteRenderer>().color = Color.green;
-                                                return;
-                                            }
-                                            else
-                                            {
-                                                objectOutside = true;
-                                                draggedObject.GetComponent<SpriteRenderer>().color = Color.red;
-                                                return;
+                                                if (spritehand.customer_data.Count > 0)
+                                                {
+                                                    objectOutside = false;
+                                                    timereduce = food.timerReduce * spritehand.customer_sit;
+                                                    spriteHandler = spritehand;
+                                                    customehandler = null;
+                                                    draggedObject.GetComponent<SpriteRenderer>().color = Color.green;
+                                                    return;
+                                                }
+                                                else
+                                                {
+                                                    objectOutside = true;
+                                                    draggedObject.GetComponent<SpriteRenderer>().color = Color.red;
+                                                    return;
+                                                }
                                             }
                                         }
+                                        
                                         #endregion
                                         #region Serving Food Customer
                                         bool containfood = false;
