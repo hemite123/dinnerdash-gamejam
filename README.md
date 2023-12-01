@@ -1,13 +1,13 @@
-#[Restaurant Rush](hemite123.itch.io/restuarant-rush)-Github Game Off 2023
+# [Restaurant Rush](hemite123.itch.io/restuarant-rush)-Github Game Off 2023
 
-##Short Description :
+## Short Description :
 Simulation Game Manage The Restaurant 
 
-##Reference :
+## Reference :
 - Dinner Dash
 - Plate Up / Overcook
 
-##Asset
+## Asset
 This Repository Containt :
  - Asset :
    - Game Data(Scriptabel Object, Sprite)
@@ -15,6 +15,6 @@ This Repository Containt :
    - Script 
 
 
-##Other Repository Game Off
+## Other Repository Game Off
 - [Bug Attack(Game-Off2021)]()
 - [Fishing Day(Game-Off2022)]()
