@@ -272,7 +272,7 @@ public class ButtonHandling : MonoBehaviour
             gamemanager.maxCustomer += 1;
             gamemanager.calculate = false;
             gamemanager.changedSize = false;
-            gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<Text>().text = firstText;
+            gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<TMPro.TextMeshProUGUI>().text = firstText;
         }
         else
         {
@@ -288,7 +288,7 @@ public class ButtonHandling : MonoBehaviour
             gamemanager.uiExpandPlace.SetActive(false);
         }
         gamemanager.changedSize = false;
-        gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<Text>().text = firstText;
+        gamemanager.uiExpandPlace.transform.Find("textExpand").GetComponent<TMPro.TextMeshProUGUI>().text = firstText;
     }
 
     public void StartGame()
