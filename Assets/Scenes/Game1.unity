@@ -1299,7 +1299,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &141104546
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4667,7 +4667,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &715626340
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5711,7 +5711,7 @@ MonoBehaviour:
     m_Bits: 3616
   onChanged:
     serializedVersion: 2
-    m_Bits: 8192
+    m_Bits: 8224
   delayclick: 0
 --- !u!114 &834324190
 MonoBehaviour:
@@ -12533,7 +12533,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 530539677}
   m_HandleRect: {fileID: 530539676}
   m_Direction: 2
-  m_Value: 1
+  m_Value: 0
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
